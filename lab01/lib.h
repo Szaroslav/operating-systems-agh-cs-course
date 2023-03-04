@@ -1,11 +1,11 @@
-typedef struct CounterArray {
-    int *counter;
-    unsigned int max_size;
-    unsigned int size;
-} CounterArray;
+typedef struct CountersArray {
+    char **counters;
+    int max_size;
+    int size;
+} CountersArray;
 
-CounterArray init_counter_array(int size);
-void count_wl_file(CounterArray *array, char *filename);
-void get_line_by_index(CounterArray *array, int index);
-void delete_line_by_index(CounterArray *array, int index);
-void free_array(CounterArray *array);
+CountersArray init_counter_array(int size);
+void count_wl_file(CountersArray *array, char *filename);
+char* get_line_by_index(CountersArray *array, int index);
+void delete_line_by_index(CountersArray *array, int index);
+void free_array(CountersArray *array);
