@@ -1,5 +1,6 @@
 #include "lib.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 CountersArray init_counter_array(int size) {
@@ -12,7 +13,9 @@ CountersArray init_counter_array(int size) {
 }
 
 void count_wl_file(CountersArray *array, char *filename) {
-    system(strcat(strcat("wc ", filename), " | awk '{ print $1, $2, $3 }' > /tmp/count_file"));
+    char cmd[256];
+    snprintf(cmd, 255, "wc %s | awk '{ print $1, $2, $3 }' > /tmp/count_file", filename);
+    system(cmd);
 
     FILE *fp = fopen("/tmp/count_file", "r");
     if (fp == NULL) {
@@ -20,7 +23,7 @@ void count_wl_file(CountersArray *array, char *filename) {
         return;
     }
 
-    char *output;
+    char output[128];
     if (fgets(output, 128, fp) == NULL) {
         printf("Failure");
         return;
