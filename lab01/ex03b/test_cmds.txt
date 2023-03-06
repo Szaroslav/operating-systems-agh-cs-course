@@ -1,0 +1,12 @@
+init 8
+count ../ex01/count.h
+count ../ex01/count.c
+count ../ex02/main.c
+show 0
+show 1
+show 2
+delete 0
+delete 1
+delete 2
+destroy
+exit
