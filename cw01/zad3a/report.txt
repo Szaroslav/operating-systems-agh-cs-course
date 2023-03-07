@@ -1,0 +1,46 @@
+# static
+Realtime [ns]: 4800, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 31167200, user [s]: 2.000000, system [s]: 1.000000
+Realtime [ns]: 14735900, user [s]: 2.999998, system [s]: 0.999999
+Realtime [ns]: 13146200, user [s]: 3.999997, system [s]: 0.999999
+23 59 576
+Realtime [ns]: 3100, user [s]: 3.999996, system [s]: 0.999999
+61 156 1629
+Realtime [ns]: 1100, user [s]: 3.999996, system [s]: 0.999999
+93 257 2928
+Realtime [ns]: 1000, user [s]: 3.999996, system [s]: 0.999999
+Realtime [ns]: 1200, user [s]: 3.999996, system [s]: 0.999999
+Realtime [ns]: 800, user [s]: 3.999996, system [s]: 0.999999
+Realtime [ns]: 900, user [s]: 3.999996, system [s]: 0.999999
+Realtime [ns]: 700, user [s]: 3.999996, system [s]: 0.999999
+
+# shared
+Realtime [ns]: 4800, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 31167200, user [s]: 2.000000, system [s]: 1.000000
+Realtime [ns]: 14735900, user [s]: 2.999998, system [s]: 0.999999
+Realtime [ns]: 13146200, user [s]: 3.999997, system [s]: 0.999999
+23 59 576
+Realtime [ns]: 3100, user [s]: 3.999996, system [s]: 0.999999
+61 156 1629
+Realtime [ns]: 1100, user [s]: 3.999996, system [s]: 0.999999
+93 257 2928
+Realtime [ns]: 1000, user [s]: 3.999996, system [s]: 0.999999
+Realtime [ns]: 1200, user [s]: 3.999996, system [s]: 0.999999
+Realtime [ns]: 800, user [s]: 3.999996, system [s]: 0.999999
+Realtime [ns]: 900, user [s]: 3.999996, system [s]: 0.999999
+Realtime [ns]: 700, user [s]: 3.999996, system [s]: 0.999999
+
+# dynamic
+Realtime [ns]: 5700, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 11347600, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 10663400, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 12084399, user [s]: 1.000000, system [s]: 0.000000
+23 59 576
+Realtime [ns]: 2400, user [s]: 0.999999, system [s]: 0.000000
+61 156 1629
+Realtime [ns]: 1200, user [s]: 0.999999, system [s]: 0.000000
+99 269 3043
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 3600, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 700, user [s]: 0.999999, system [s]: 0.000000

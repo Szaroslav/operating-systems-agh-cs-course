@@ -1,7 +1,7 @@
 init 8
-count ../ex01/count.h
-count ../ex01/count.c
-count ../ex02/main.c
+count ../zad1/count.h
+count ../zad1/count.c
+count ../zad2/main.c
 show 0
 show 1
 show 2

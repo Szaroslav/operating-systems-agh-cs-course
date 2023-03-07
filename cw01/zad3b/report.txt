@@ -1,0 +1,142 @@
+# static -O0
+Realtime [ns]: 4400, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 12390700, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 15933100, user [s]: 1.000000, system [s]: 0.000000
+Realtime [ns]: 26809701, user [s]: 0.999999, system [s]: 0.000000
+23 59 576
+Realtime [ns]: 3300, user [s]: 0.999999, system [s]: 0.000000
+61 156 1629
+Realtime [ns]: 1100, user [s]: 0.999999, system [s]: 0.000000
+93 257 2928
+Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 1400, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 900, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+
+# shared -O0
+Realtime [ns]: 6400, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 11000701, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 11462800, user [s]: 1.000000, system [s]: 0.000000
+Realtime [ns]: 12161901, user [s]: 0.999999, system [s]: 0.000000
+23 59 576
+Realtime [ns]: 2800, user [s]: 0.999999, system [s]: 0.000000
+61 156 1629
+Realtime [ns]: 1100, user [s]: 0.999999, system [s]: 0.000000
+93 257 2928
+Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 3900, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+
+# dynamic -O0
+Realtime [ns]: 8800, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 13734400, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 11269000, user [s]: 1.000000, system [s]: 0.000000
+Realtime [ns]: 10916700, user [s]: 0.999999, system [s]: 0.000000
+23 59 576
+Realtime [ns]: 3000, user [s]: 0.999999, system [s]: 0.000000
+61 156 1629
+Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
+99 269 3043
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 3300, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+
+# static -O
+Realtime [ns]: 6700, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 31687701, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 47478902, user [s]: 1.000000, system [s]: 0.000000
+Realtime [ns]: -937346298, user [s]: 1.999999, system [s]: 0.000000
+23 59 576
+Realtime [ns]: 2900, user [s]: 1.999998, system [s]: 0.000000
+61 156 1629
+Realtime [ns]: 1100, user [s]: 1.999998, system [s]: 0.000000
+93 257 2928
+Realtime [ns]: 1000, user [s]: 1.999998, system [s]: 0.000000
+Realtime [ns]: 1300, user [s]: 1.999998, system [s]: 0.000000
+Realtime [ns]: 900, user [s]: 1.999998, system [s]: 0.000000
+Realtime [ns]: 900, user [s]: 1.999998, system [s]: 0.000000
+Realtime [ns]: 700, user [s]: 1.999998, system [s]: 0.000000
+
+# shared -O
+Realtime [ns]: 6300, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 11898900, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 12428801, user [s]: 1.000000, system [s]: 0.000000
+Realtime [ns]: 13622400, user [s]: 1.999999, system [s]: 0.000000
+23 59 576
+Realtime [ns]: 2800, user [s]: 1.999998, system [s]: 0.000000
+61 156 1629
+Realtime [ns]: 1000, user [s]: 1.999998, system [s]: 0.000000
+93 257 2928
+Realtime [ns]: 900, user [s]: 1.999998, system [s]: 0.000000
+Realtime [ns]: 4200, user [s]: 1.999998, system [s]: 0.000000
+Realtime [ns]: 900, user [s]: 1.999998, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 1.999998, system [s]: 0.000000
+Realtime [ns]: 700, user [s]: 1.999998, system [s]: 0.000000
+
+# dynamic -O
+Realtime [ns]: 8800, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 13734400, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 11269000, user [s]: 1.000000, system [s]: 0.000000
+Realtime [ns]: 10916700, user [s]: 0.999999, system [s]: 0.000000
+23 59 576
+Realtime [ns]: 3000, user [s]: 0.999999, system [s]: 0.000000
+61 156 1629
+Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
+99 269 3043
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 3300, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 700, user [s]: 0.999999, system [s]: 0.000000
+
+# static -Os
+Realtime [ns]: 8400, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 11639501, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 10091500, user [s]: 1.000000, system [s]: 0.000000
+Realtime [ns]: 11110600, user [s]: 0.999999, system [s]: 0.000000
+23 59 576
+Realtime [ns]: 2800, user [s]: 0.999999, system [s]: 0.000000
+61 156 1629
+Realtime [ns]: 1200, user [s]: 0.999999, system [s]: 0.000000
+93 257 2928
+Realtime [ns]: 1100, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 1200, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 900, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 700, user [s]: 0.999999, system [s]: 0.000000
+
+# shared -Os
+Realtime [ns]: 7000, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 11550501, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 10920500, user [s]: 1.000000, system [s]: 0.000000
+Realtime [ns]: 11154800, user [s]: 0.999999, system [s]: 0.000000
+23 59 576
+Realtime [ns]: 2800, user [s]: 0.999999, system [s]: 0.000000
+61 156 1629
+Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
+93 257 2928
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 4200, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 900, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 700, user [s]: 0.999999, system [s]: 0.000000
+
+# dynamic -Os
+Realtime [ns]: 6600, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 13412900, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 13875000, user [s]: 1.000000, system [s]: 0.000000
+Realtime [ns]: 15583900, user [s]: 1.999999, system [s]: 0.000000
+23 59 576
+Realtime [ns]: 2800, user [s]: 1.999998, system [s]: 0.000000
+61 156 1629
+Realtime [ns]: 1100, user [s]: 1.999998, system [s]: 0.000000
+99 269 3043
+Realtime [ns]: 900, user [s]: 1.999998, system [s]: 0.000000
+Realtime [ns]: 4100, user [s]: 1.999998, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 1.999998, system [s]: 0.000000
+Realtime [ns]: 700, user [s]: 1.999998, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 1.999998, system [s]: 0.000000
