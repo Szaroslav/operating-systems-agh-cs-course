@@ -22,7 +22,7 @@ typedef struct CounterArray {
 int main(int argc, char **argv) {
     #ifdef DYNAMIC
 
-    void *handle = dlopen("libcount_dynamic.so", RTLD_LAZY);
+    void *handle = dlopen("./libcount_dynamic.so", RTLD_LAZY);
     if (!handle) {
         printf("Failed to dlopen libcount_dynamic.so");
         return -1;

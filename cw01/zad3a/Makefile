@@ -19,8 +19,7 @@ shared:
 dynamic:
 	$(CC) -fPIC -c count.c -o count_dynamic.o
 	$(CC) -shared count_dynamic.o -o libcount_dynamic.so
-	$(CC) -c -DDYNAMIC main.c -o main_dynamic.o 
-	$(CC) main_dynamic.o -L. -Wl,-rpath=. -lcount_dynamic -o main_dynamic
+	$(CC) main.c -o main_dynamic -ldl -DDYNAMIC
 	./main_dynamic < test_cmds.txt > results_dynamic.txt
 
 clean:

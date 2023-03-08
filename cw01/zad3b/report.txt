@@ -1,13 +1,13 @@
 # static -O0
-Realtime [ns]: 4400, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 12390700, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 15933100, user [s]: 1.000000, system [s]: 0.000000
-Realtime [ns]: 26809701, user [s]: 0.999999, system [s]: 0.000000
-23 59 576
-Realtime [ns]: 3300, user [s]: 0.999999, system [s]: 0.000000
-61 156 1629
+Realtime [ns]: 5200, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 50599796, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 83631393, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 133308286, user [s]: 1.000000, system [s]: 0.000000
+ 23  59 576 ../zad1/count.h
+Realtime [ns]: 3500, user [s]: 0.999999, system [s]: 0.000000
+  61  148 1600 ../zad1/count.c
 Realtime [ns]: 1100, user [s]: 0.999999, system [s]: 0.000000
-93 257 2928
+ 100  269 3047 ../zad2/main.c
 Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
 Realtime [ns]: 1400, user [s]: 0.999999, system [s]: 0.000000
 Realtime [ns]: 900, user [s]: 0.999999, system [s]: 0.000000
@@ -15,128 +15,129 @@ Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
 Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
 
 # shared -O0
-Realtime [ns]: 6400, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 11000701, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 11462800, user [s]: 1.000000, system [s]: 0.000000
-Realtime [ns]: 12161901, user [s]: 0.999999, system [s]: 0.000000
-23 59 576
-Realtime [ns]: 2800, user [s]: 0.999999, system [s]: 0.000000
-61 156 1629
+Realtime [ns]: 9500, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 16996599, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 10670598, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 13298699, user [s]: 1.000000, system [s]: 0.000000
+ 23  59 576 ../zad1/count.h
+Realtime [ns]: 2900, user [s]: 0.999999, system [s]: 0.000000
+  61  148 1600 ../zad1/count.c
 Realtime [ns]: 1100, user [s]: 0.999999, system [s]: 0.000000
-93 257 2928
-Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
-Realtime [ns]: 3900, user [s]: 0.999999, system [s]: 0.000000
-Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
-Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
-Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
-
-# dynamic -O0
-Realtime [ns]: 8800, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 13734400, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 11269000, user [s]: 1.000000, system [s]: 0.000000
-Realtime [ns]: 10916700, user [s]: 0.999999, system [s]: 0.000000
-23 59 576
+ 100  269 3047 ../zad2/main.c
+Realtime [ns]: 1100, user [s]: 0.999999, system [s]: 0.000000
 Realtime [ns]: 3000, user [s]: 0.999999, system [s]: 0.000000
-61 156 1629
 Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
-99 269 3043
-Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
-Realtime [ns]: 3300, user [s]: 0.999999, system [s]: 0.000000
-Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
-Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
-
-# static -O
-Realtime [ns]: 6700, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 31687701, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 47478902, user [s]: 1.000000, system [s]: 0.000000
-Realtime [ns]: -937346298, user [s]: 1.999999, system [s]: 0.000000
-23 59 576
-Realtime [ns]: 2900, user [s]: 1.999998, system [s]: 0.000000
-61 156 1629
-Realtime [ns]: 1100, user [s]: 1.999998, system [s]: 0.000000
-93 257 2928
-Realtime [ns]: 1000, user [s]: 1.999998, system [s]: 0.000000
-Realtime [ns]: 1300, user [s]: 1.999998, system [s]: 0.000000
-Realtime [ns]: 900, user [s]: 1.999998, system [s]: 0.000000
-Realtime [ns]: 900, user [s]: 1.999998, system [s]: 0.000000
-Realtime [ns]: 700, user [s]: 1.999998, system [s]: 0.000000
-
-# shared -O
-Realtime [ns]: 6300, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 11898900, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 12428801, user [s]: 1.000000, system [s]: 0.000000
-Realtime [ns]: 13622400, user [s]: 1.999999, system [s]: 0.000000
-23 59 576
-Realtime [ns]: 2800, user [s]: 1.999998, system [s]: 0.000000
-61 156 1629
-Realtime [ns]: 1000, user [s]: 1.999998, system [s]: 0.000000
-93 257 2928
-Realtime [ns]: 900, user [s]: 1.999998, system [s]: 0.000000
-Realtime [ns]: 4200, user [s]: 1.999998, system [s]: 0.000000
-Realtime [ns]: 900, user [s]: 1.999998, system [s]: 0.000000
-Realtime [ns]: 800, user [s]: 1.999998, system [s]: 0.000000
-Realtime [ns]: 700, user [s]: 1.999998, system [s]: 0.000000
-
-# dynamic -O
-Realtime [ns]: 8800, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 13734400, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 11269000, user [s]: 1.000000, system [s]: 0.000000
-Realtime [ns]: 10916700, user [s]: 0.999999, system [s]: 0.000000
-23 59 576
-Realtime [ns]: 3000, user [s]: 0.999999, system [s]: 0.000000
-61 156 1629
-Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
-99 269 3043
-Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
-Realtime [ns]: 3300, user [s]: 0.999999, system [s]: 0.000000
-Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
 Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
 Realtime [ns]: 700, user [s]: 0.999999, system [s]: 0.000000
 
-# static -Os
-Realtime [ns]: 8400, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 11639501, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 10091500, user [s]: 1.000000, system [s]: 0.000000
-Realtime [ns]: 11110600, user [s]: 0.999999, system [s]: 0.000000
-23 59 576
-Realtime [ns]: 2800, user [s]: 0.999999, system [s]: 0.000000
-61 156 1629
+# dynamic -O0
+Realtime [ns]: 10600, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 14482698, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 11339999, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 14513199, user [s]: 1.000000, system [s]: 0.000000
+ 23  59 576 ../zad1/count.h
+Realtime [ns]: 3400, user [s]: 0.999999, system [s]: 0.000000
+  61  148 1600 ../zad1/count.c
 Realtime [ns]: 1200, user [s]: 0.999999, system [s]: 0.000000
-93 257 2928
-Realtime [ns]: 1100, user [s]: 0.999999, system [s]: 0.000000
-Realtime [ns]: 1200, user [s]: 0.999999, system [s]: 0.000000
-Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+ 100  269 3047 ../zad2/main.c
 Realtime [ns]: 900, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 4200, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 700, user [s]: 0.999999, system [s]: 0.000000
+
+# static -O
+Realtime [ns]: 7800, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 16610798, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 14488399, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 16622798, user [s]: 1.000000, system [s]: 0.000000
+ 23  59 576 ../zad1/count.h
+Realtime [ns]: 3200, user [s]: 0.999999, system [s]: 0.000000
+  61  148 1600 ../zad1/count.c
+Realtime [ns]: 1200, user [s]: 0.999999, system [s]: 0.000000
+ 100  269 3047 ../zad2/main.c
+Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 1300, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+
+# shared -O
+Realtime [ns]: 11000, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 24431298, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 220333578, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: -874952413, user [s]: 1.000000, system [s]: 0.000000
+ 23  59 576 ../zad1/count.h
+Realtime [ns]: 3500, user [s]: 0.999999, system [s]: 0.000000
+  61  148 1600 ../zad1/count.c
+Realtime [ns]: 1100, user [s]: 0.999999, system [s]: 0.000000
+ 100  269 3047 ../zad2/main.c
+Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 4500, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+
+# dynamic -O
+Realtime [ns]: 8600, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 19204098, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 16137198, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 26287998, user [s]: 1.000000, system [s]: 0.000000
+ 23  59 576 ../zad1/count.h
+Realtime [ns]: 3100, user [s]: 0.999999, system [s]: 0.000000
+  61  148 1600 ../zad1/count.c
+Realtime [ns]: 1100, user [s]: 0.999999, system [s]: 0.000000
+ 100  269 3047 ../zad2/main.c
+Realtime [ns]: 900, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 4900, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 900, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
+
+# static -Os
+Realtime [ns]: 5200, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 47458395, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 33194397, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 35686796, user [s]: 1.000000, system [s]: 0.000000
+ 23  59 576 ../zad1/count.h
+Realtime [ns]: 2900, user [s]: 0.999999, system [s]: 0.000000
+  61  148 1600 ../zad1/count.c
+Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
+ 100  269 3047 ../zad2/main.c
+Realtime [ns]: 900, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 1200, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 700, user [s]: 0.999999, system [s]: 0.000000
 Realtime [ns]: 700, user [s]: 0.999999, system [s]: 0.000000
 
 # shared -Os
-Realtime [ns]: 7000, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 11550501, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 10920500, user [s]: 1.000000, system [s]: 0.000000
-Realtime [ns]: 11154800, user [s]: 0.999999, system [s]: 0.000000
-23 59 576
-Realtime [ns]: 2800, user [s]: 0.999999, system [s]: 0.000000
-61 156 1629
+Realtime [ns]: 9500, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 32678697, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 47344195, user [s]: 1.000000, system [s]: 0.000000
+Realtime [ns]: 37208596, user [s]: 0.999999, system [s]: 0.000000
+ 23  59 576 ../zad1/count.h
+Realtime [ns]: 3500, user [s]: 0.999999, system [s]: 0.000000
+  61  148 1600 ../zad1/count.c
+Realtime [ns]: 1200, user [s]: 0.999999, system [s]: 0.000000
+ 100  269 3047 ../zad2/main.c
 Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
-93 257 2928
-Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
-Realtime [ns]: 4200, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 6200, user [s]: 0.999999, system [s]: 0.000000
 Realtime [ns]: 900, user [s]: 0.999999, system [s]: 0.000000
 Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
-Realtime [ns]: 700, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
 
 # dynamic -Os
-Realtime [ns]: 6600, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 13412900, user [s]: 0.000000, system [s]: 0.000000
-Realtime [ns]: 13875000, user [s]: 1.000000, system [s]: 0.000000
-Realtime [ns]: 15583900, user [s]: 1.999999, system [s]: 0.000000
-23 59 576
-Realtime [ns]: 2800, user [s]: 1.999998, system [s]: 0.000000
-61 156 1629
-Realtime [ns]: 1100, user [s]: 1.999998, system [s]: 0.000000
-99 269 3043
-Realtime [ns]: 900, user [s]: 1.999998, system [s]: 0.000000
-Realtime [ns]: 4100, user [s]: 1.999998, system [s]: 0.000000
-Realtime [ns]: 800, user [s]: 1.999998, system [s]: 0.000000
-Realtime [ns]: 700, user [s]: 1.999998, system [s]: 0.000000
-Realtime [ns]: 800, user [s]: 1.999998, system [s]: 0.000000
+Realtime [ns]: 9500, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 26001397, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 17530398, user [s]: 0.000000, system [s]: 0.000000
+Realtime [ns]: 23087498, user [s]: 1.000000, system [s]: 0.000000
+ 23  59 576 ../zad1/count.h
+Realtime [ns]: 4100, user [s]: 0.999999, system [s]: 0.000000
+  61  148 1600 ../zad1/count.c
+Realtime [ns]: 1300, user [s]: 0.999999, system [s]: 0.000000
+ 100  269 3047 ../zad2/main.c
+Realtime [ns]: 900, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 5600, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 1000, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 1100, user [s]: 0.999999, system [s]: 0.000000
+Realtime [ns]: 800, user [s]: 0.999999, system [s]: 0.000000
