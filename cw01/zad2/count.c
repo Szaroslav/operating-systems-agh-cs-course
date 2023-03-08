@@ -16,7 +16,7 @@ CounterArray init_counter_array(int size) {
 
 void count_wl_file(CounterArray *array, char *filename) {
     char cmd[BUFFER_SIZE];
-    snprintf(cmd, BUFFER_SIZE - 1, "wc %s | awk '{ print $1, $2, $3 }' > /tmp/count_file", filename);
+    snprintf(cmd, BUFFER_SIZE - 1, "wc %s > /tmp/count_file", filename);
     system(cmd);
 
     FILE *fp = fopen("/tmp/count_file", "r");
