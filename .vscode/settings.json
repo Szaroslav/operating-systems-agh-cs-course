@@ -3,6 +3,8 @@
         "*.embeddedhtml": "html",
         "stdlib.h": "c",
         "string.h": "c",
-        "lib.h": "c"
+        "lib.h": "c",
+        "cli.h": "c",
+        "system_file.h": "c"
     }
 }
