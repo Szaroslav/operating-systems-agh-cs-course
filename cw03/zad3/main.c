@@ -1,4 +1,5 @@
 #include "cli.h"
+#include "dir_process.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -9,17 +10,10 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    const int n = atoi(argv[1]);
 
-    for (int i = 0; i < n; i++) {
-        if (fork() == 0) {
-            printf("Parent PID:\t%d\tCurrent PID:\t%d\n", getppid(), getpid());
-            exit(0);
-        }
-    }
-
-    for (int i = 0; i < n; i++) wait(NULL);
-    printf("argv[1]: %d\n", n);
+    // printf("XDDDD\n");
+    // fflush(stdout);
+    list_all_files_by_content(argv[1], argv[2]);
 
     return 0;
 }
