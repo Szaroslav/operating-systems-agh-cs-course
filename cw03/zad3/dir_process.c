@@ -5,10 +5,18 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
+#include <errno.h>
 
 void list_all_files_by_content(char *path, const char *contains) {
     if (fork() == 0) {
         DIR *dir = opendir(path);
+        if (dir == NULL) {
+            char b[BUFFER_SIZE];
+            snprintf(b, BUFFER_SIZE, "Failed to open %s\n", path);
+            perror(b);
+            exit(-1);
+        }
 
         struct dirent *dirt;
         while ((dirt = readdir(dir)) != NULL) {
@@ -20,15 +28,16 @@ void list_all_files_by_content(char *path, const char *contains) {
             new_path[size - 1] = '\0';
 
             struct stat st;
-            stat(new_path, &st);
-            // fflush(stdout);
-            // printf("tego typu\n");
-            // fflush(stdout);
+            if (stat(new_path, &st) == -1) {
+                char b[BUFFER_SIZE];
+                snprintf(b, BUFFER_SIZE, "%d stat() error\n", errno);
+                perror(b);
+                exit(errno);
+            }
 
             if (!S_ISDIR(st.st_mode) && S_ISREG(st.st_mode)) {
                 if (file_contains(new_path, contains)) {
                     printf("%s %d\n", new_path, getpid());
-                    fflush(stdout);
                 }
             }
             else if (strcmp(dirt->d_name, ".") != 0 && strcmp(dirt->d_name, "..") != 0 && S_ISDIR(st.st_mode)) {
@@ -39,6 +48,7 @@ void list_all_files_by_content(char *path, const char *contains) {
         }
         
         closedir(dir);
+        while (wait(NULL) > 0);
         fflush(stdout);
         exit(0);
     }  
