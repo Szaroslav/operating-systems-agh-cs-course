@@ -10,7 +10,7 @@ build: clean
 	$(CC) $(BUILD_DIR_NAME)/main.o $(BUILD_DIR_NAME)/lib$(CLI_LIB_NAME).a $(BUILD_DIR_NAME)/lib$(DP_LIB_NAME).a -o $(BUILD_DIR_NAME)/main
 
 run: build
-	$(BUILD_DIR_NAME)/main "/mnt/c/Users/Jakub/Desktop/test" "#include"
+	$(BUILD_DIR_NAME)/main ~ "#include"
 
 cli:
 	$(CC) -c $(CLI_LIB_NAME).c -o $(BUILD_DIR_NAME)/$(CLI_LIB_NAME).o
