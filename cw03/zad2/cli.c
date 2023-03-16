@@ -21,10 +21,14 @@ int cli_verify_args(int argc, char **argv) {
     return flag;
 }
 
-char *get_app_name(char *name, char *path) {
+char *get_app_name(char *path) {
     char *last_slash = strrchr(path, '/');
     int n = strlen(path);
     int new_size = n - strlen(last_slash + 1);
-    name = malloc(sizeof(char) * new_size);
-    return strncpy(name, last_slash + 1, new_size);
+
+    char *name = malloc(sizeof(char) * new_size + 1);
+    strncpy(name, last_slash + 1, new_size);
+    name[new_size] = '\0';
+
+    return new_size > 0 ? name : NULL;
 }

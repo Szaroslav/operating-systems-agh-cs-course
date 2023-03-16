@@ -13,7 +13,7 @@ void list_all_files_by_content(char *path, const char *contains) {
         DIR *dir = opendir(path);
         if (dir == NULL) {
             char b[BUFFER_SIZE];
-            snprintf(b, BUFFER_SIZE, "Failed to open %s\n", path);
+            snprintf(b, BUFFER_SIZE, "Failed to open %s", path);
             perror(b);
             exit(-1);
         }
@@ -30,14 +30,14 @@ void list_all_files_by_content(char *path, const char *contains) {
             struct stat st;
             if (stat(new_path, &st) == -1) {
                 char b[BUFFER_SIZE];
-                snprintf(b, BUFFER_SIZE, "%d stat() error\n", errno);
+                snprintf(b, BUFFER_SIZE, "%d stat() error %s", errno, new_path);
                 perror(b);
                 exit(errno);
             }
 
             if (!S_ISDIR(st.st_mode) && S_ISREG(st.st_mode)) {
                 if (file_contains(new_path, contains)) {
-                    printf("%s %d\n", new_path, getpid());
+                    printf("%s\t%d\n", new_path, getpid());
                 }
             }
             else if (strcmp(dirt->d_name, ".") != 0 && strcmp(dirt->d_name, "..") != 0 && S_ISDIR(st.st_mode)) {
