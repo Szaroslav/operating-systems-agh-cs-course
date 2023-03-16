@@ -10,10 +10,10 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-
-    // printf("XDDDD\n");
-    // fflush(stdout);
     list_all_files_by_content(argv[1], argv[2]);
+    
+    while (wait(NULL) > 0);
+    fflush(stdout);
 
     return 0;
 }

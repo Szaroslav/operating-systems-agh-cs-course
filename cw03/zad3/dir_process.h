@@ -1,6 +1,8 @@
 #ifndef _DIR_PROCESS_H
 #define _DIR_PROCESS_H
 
+#define BUFFER_SIZE 1024
+
 #include <stdbool.h>
 #include <sys/stat.h>
 
