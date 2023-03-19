@@ -8,7 +8,7 @@ build: clean
 	$(CC) -c main.c -o $(BUILD_DIR_NAME)/main.o
 	$(CC) $(BUILD_DIR_NAME)/main.o $(BUILD_DIR_NAME)/lib$(CLI_LIB_NAME).a -o $(BUILD_DIR_NAME)/main
 
-run: build
+test: build
 	$(BUILD_DIR_NAME)/main ../..
 
 cli:
