@@ -8,7 +8,8 @@
         "system_file.h": "c",
         "reverse.h": "c",
         "stdio.h": "c",
-        "dir_process.h": "c"
+        "dir_process.h": "c",
+        "signals.h": "c"
     },
     "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools"
 }
