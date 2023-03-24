@@ -1,24 +1,25 @@
 CC = gcc -Wall
-BUILD_DIR_NAME = build
-CLI_LIB_NAME = cli
-SIGNALS_LIB_NAME = signals
+SRC_DIR = src
+BUILD_DIR = build
+SIGNALS_LIB= signals
 
 build: clean
-	mkdir $(BUILD_DIR_NAME)
-	make cli
-	$(CC) -c main.c -o $(BUILD_DIR_NAME)/main.o
-	$(CC) $(BUILD_DIR_NAME)/main.o $(BUILD_DIR_NAME)/lib$(CLI_LIB_NAME).a -o $(BUILD_DIR_NAME)/main
+	mkdir $(BUILD_DIR)
+	make signals; make exec
+	$(CC) -c $(SRC_DIR)/main.c -o $(BUILD_DIR)/main.o
+	$(CC) $(BUILD_DIR)/main.o $(BUILD_DIR)/lib$(SIGNALS_LIB).a -o $(BUILD_DIR)/main
 
 test: build
-	$(BUILD_DIR_NAME)/main ignore
-
-cli:
-	$(CC) -c $(CLI_LIB_NAME).c -o $(BUILD_DIR_NAME)/$(CLI_LIB_NAME).o
-	ar rcs ./$(BUILD_DIR_NAME)/lib$(CLI_LIB_NAME).a $(BUILD_DIR_NAME)/$(CLI_LIB_NAME).o
+	$(BUILD_DIR)/main ignore
+	$(BUILD_DIR)/main handler
 
 signals:
-	$(CC) -c $(SIGNALS_LIB_NAME).c -o $(BUILD_DIR_NAME)/$(SIGNALS_LIB_NAME).o
-	ar rcs ./$(BUILD_DIR_NAME)/lib$(SIGNALS_LIB_NAME).a $(BUILD_DIR_NAME)/$(SIGNALS_LIB_NAME).o
+	$(CC) -c $(SRC_DIR)/$(SIGNALS_LIB).c -o $(BUILD_DIR)/$(SIGNALS_LIB).o
+	ar rcs ./$(BUILD_DIR)/lib$(SIGNALS_LIB).a $(BUILD_DIR)/$(SIGNALS_LIB).o
+
+exec:
+	$(CC) -c $(SRC_DIR)/exec.c -o $(BUILD_DIR)/exec.o
+	$(CC) $(BUILD_DIR)/exec.o $(BUILD_DIR)/lib$(SIGNALS_LIB).a -o $(BUILD_DIR)/exec
 
 clean:
-	rm -rf $(BUILD_DIR_NAME)
+	rm -rf $(BUILD_DIR)
