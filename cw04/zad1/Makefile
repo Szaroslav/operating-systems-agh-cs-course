@@ -10,8 +10,10 @@ build: clean
 	$(CC) $(BUILD_DIR)/main.o $(BUILD_DIR)/lib$(SIGNALS_LIB).a -o $(BUILD_DIR)/main
 
 test: build
-	$(BUILD_DIR)/main ignore
-	$(BUILD_DIR)/main handler
+	$(BUILD_DIR)/main ignore;	echo ""
+	$(BUILD_DIR)/main handler;	echo ""
+	$(BUILD_DIR)/main mask;		echo ""
+	$(BUILD_DIR)/main pending;	echo ""
 
 signals:
 	$(CC) -c $(SRC_DIR)/$(SIGNALS_LIB).c -o $(BUILD_DIR)/$(SIGNALS_LIB).o
