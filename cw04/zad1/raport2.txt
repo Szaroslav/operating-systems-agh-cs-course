@@ -1,0 +1,3 @@
+- w każdej wersji (przodek, potomek i exec) sygnały są ignorowane
+- sygnały są tworzone z tym samym PID w przodku i potomku
+- sygnały są maskowane w każdej wersji

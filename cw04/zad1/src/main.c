@@ -21,18 +21,14 @@ void mask_signal() {
 void validate_is_signal_pending() {
     sigset_t pending_set;
     sigpending(&pending_set);
+
     if (sigismember(&pending_set, SIGUSR1) == 1)
-        printf("SIGUSR1 is waiting for unlocking...\n");
+        printf("[main] SIGUSR1 is pending\n");
+    else
+        printf("[main] SIGUSR1 is not pending\n");
 }
 
-int main(int argc, char **argv) {
-    if (argc < 2) {
-        fprintf(stderr, "Too few arguments (at least 1)\n");
-        return -1;
-    }
-
-    const enum Signal sig = parse_signal(argv[1]);
-
+void set_signal(const enum Signal sig) {
     switch (sig) {
         case SIG_IGNORE:
             signal(SIGUSR1, SIG_IGN);
@@ -43,28 +39,40 @@ int main(int argc, char **argv) {
             break;
 
         case SIG_MASK:
-        case SIG_PENDING:
             mask_signal();
             break;
+
+        case SIG_PENDING:
+            validate_is_signal_pending();
     }
+}
+
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        fprintf(stderr, "Too few arguments (at least 1)\n");
+        return -1;
+    }
+
+    const enum Signal sig = parse_signal(argv[1]);
+
+    set_signal(sig);
     
-    printf("Raise a signal in root process...\n"); 
+    printf("[main.root] Raise a signal\n"); 
     raise(SIGUSR1);
 
-    printf("[Root process]\n");
-    validate_is_signal_pending();
-
     if (fork() == 0) {
+        set_signal(sig);
+
         if (sig != SIG_PENDING) {
-            printf("Raise a signal in child process...\n"); 
+            printf("[main.child] Raise a signal\n"); 
             raise(SIGUSR1);
         }
-
-        printf("[Child process]\n");
-        validate_is_signal_pending();
+        else {
+            validate_is_signal_pending();
+        }
     }
 
-    execl("build/exec", "exec", (char *) NULL);
+    execl("build/exec", "exec", argv[1], (char *) NULL);
 
     while (wait(NULL));
 
