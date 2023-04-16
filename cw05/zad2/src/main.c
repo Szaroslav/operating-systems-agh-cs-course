@@ -6,13 +6,17 @@
 #include <sys/wait.h>
 #include <time.h>
 
+double f(double x) {
+    return 4 / (x*x + 1);
+}
+
 double get_f_field(double a, double rs, int n) {
-    double f = 0.0;
+    double field = 0.0;
     for (int i = 0; i < n; i++) {
-        f += 4 / (pow(a + i * rs, 2) + 1) * rs;
+        field += f(a + i * rs) * rs;
     }
 
-    return f;
+    return field;
 }
 
 void init_fds(int **fds, int n) {
@@ -27,33 +31,42 @@ void free_fds(int **fds, int n) {
     free(fds);
 }
 
+struct timespec get_time() {
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+
+    return ts;
+}
+
 int main(int argc, char **argv) {
     if (argc < 3) {
         perror("[ARG ERROR] Too few arguments (at least 2)");
         return -1;
     }
 
-    clock_t start = clock();
+    struct timespec start = get_time();
     
     double rec_width = atof(argv[1]);
     int n = atoi(argv[2]);
     int m = round(1 / rec_width);
+    int r = m % n;
 
-    int **fds = (int **) malloc(n * sizeof(int *));
-    for (int i = 0; i < n; i++)
-        fds[i] = (int *) malloc(2 * sizeof(int));
+    int *read_fds = (int *) malloc(n * sizeof(int));
 
     for (int i = 0; i < n; i++) {
-        pipe(fds[i]);
+        int fds[2];
+        pipe(fds);
+        read_fds[i] = fds[0];
+
         if (fork() == 0) {
-            close(fds[i][0]);
-            double r = get_f_field((double) i / n, rec_width, m / n);
-            write(fds[i][1], &r, sizeof(double));
+            close(fds[0]);
+            double f = get_f_field((double) i / n, rec_width, m / n + (r-- > 0 ? 1 : 0));
+            write(fds[1], &f, sizeof(double));
 
             return 0;
         }
         else {
-            close(fds[i][1]);
+            close(fds[1]);
         }
     }
 
@@ -62,19 +75,21 @@ int main(int argc, char **argv) {
     double field = 0.0;
     for (int i = 0; i < n; i++) {
         double r = 0.0;
-        read(fds[i][0], &r, sizeof(double));
+        read(read_fds[i], &r, sizeof(double));
         field += r;
     }
 
-    for (int i = 0; i < n; i++)
-        free(fds[i]);
-    free(fds);
+    free(read_fds);
 
-    printf("================  Output  ================\n");
-    printf("Execution time: %lfs\n", (double) (clock() - start) / CLOCKS_PER_SEC);
+    struct timespec end = get_time();
+    double time = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / pow(10, 9);
+
+    printf("==================  Output  ==================\n");
+    printf("Execution time: %lf s\n", time);
     printf("Input arguments:\n");
     printf("N = %d,\trectangle_width = %lf\n", n, rec_width);
-    printf("result:\t%lf\n", field);
+    printf("Result:\t%lf\n", field);
+    printf("==============================================\n");
 
     fflush(stdout);
     return 0;
