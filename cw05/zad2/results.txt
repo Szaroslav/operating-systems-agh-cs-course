@@ -1,0 +1,98 @@
+==================  Output  ==================
+Execution time: 0.000283 s
+Input arguments:
+N = 1,	rectangle_width = 0.001000
+Result:	3.142592
+==============================================
+
+==================  Output  ==================
+Execution time: 0.000350 s
+Input arguments:
+N = 2,	rectangle_width = 0.001000
+Result:	3.142592
+==============================================
+
+==================  Output  ==================
+Execution time: 0.000378 s
+Input arguments:
+N = 3,	rectangle_width = 0.001000
+Result:	3.148173
+==============================================
+
+==================  Output  ==================
+Execution time: 0.001591 s
+Input arguments:
+N = 4,	rectangle_width = 0.001000
+Result:	3.142592
+==============================================
+
+==================  Output  ==================
+Execution time: 0.003137 s
+Input arguments:
+N = 8,	rectangle_width = 0.001000
+Result:	3.142592
+==============================================
+
+==================  Output  ==================
+Execution time: 0.001264 s
+Input arguments:
+N = 1,	rectangle_width = 0.000010
+Result:	3.141603
+==============================================
+
+==================  Output  ==================
+Execution time: 0.000733 s
+Input arguments:
+N = 2,	rectangle_width = 0.000010
+Result:	3.141603
+==============================================
+
+==================  Output  ==================
+Execution time: 0.001423 s
+Input arguments:
+N = 3,	rectangle_width = 0.000010
+Result:	3.141658
+==============================================
+
+==================  Output  ==================
+Execution time: 0.000718 s
+Input arguments:
+N = 4,	rectangle_width = 0.000010
+Result:	3.141603
+==============================================
+
+==================  Output  ==================
+Execution time: 0.001080 s
+Input arguments:
+N = 8,	rectangle_width = 0.000010
+Result:	3.141603
+==============================================
+
+==================  Output  ==================
+Execution time: 5.726782 s
+Input arguments:
+N = 1,	rectangle_width = 0.000000
+Result:	3.141593
+==============================================
+
+==================  Output  ==================
+Execution time: 2.810494 s
+Input arguments:
+N = 2,	rectangle_width = 0.000000
+Result:	3.141593
+==============================================
+
+==================  Output  ==================
+Execution time: 2.079429 s
+Input arguments:
+N = 3,	rectangle_width = 0.000000
+Result:	3.141593
+==============================================
+
+==================  Output  ==================
+Execution time: 1.799599 s
+Input arguments:
+N = 4,	rectangle_width = 0.000000
+Result:	3.141593
+==============================================
+
