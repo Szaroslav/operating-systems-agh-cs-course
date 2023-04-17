@@ -10,25 +10,13 @@ double f(double x) {
     return 4 / (x*x + 1);
 }
 
-double get_f_field(double a, double rs, int n) {
+double get_f_field(double a, double rw, int n) {
     double field = 0.0;
     for (int i = 0; i < n; i++) {
-        field += f(a + i * rs) * rs;
+        field += f(a + i * rw) * rw;
     }
 
     return field;
-}
-
-void init_fds(int **fds, int n) {
-    fds = (int **) malloc(n * sizeof(int *));
-    for (int i = 0; i < n; i++)
-        fds[i] = (int *) malloc(2 * sizeof(int));
-}
-
-void free_fds(int **fds, int n) {
-    for (int i = 0; i < n; i++)
-        free(fds[i]);
-    free(fds);
 }
 
 struct timespec get_time() {
