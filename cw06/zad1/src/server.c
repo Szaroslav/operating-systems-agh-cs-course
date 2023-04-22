@@ -240,14 +240,11 @@ int main(int argc, char **argv) {
     printf("Succeed\n");
 
     while (1) {
-        // printf("?\n");
-        // printf("%ld\n", msgrcv(sqid, &msg, MESSAGE_SIZE, MT_STOP, IPC_NOWAIT));
         if (msgrcv(sqid, &msg, MESSAGE_SIZE, MT_STOP, IPC_NOWAIT) >= 0) {
             save_output_to_file();
             on_stop();
         }
         else if (msgrcv(sqid, &msg, MESSAGE_SIZE, MT_STOP, IPC_NOWAIT | MSG_EXCEPT) >= 0) {
-            // printf("%ld\n", msg.mtype);
             save_output_to_file();
             switch (msg.mtype) {
                 case MT_INIT:
