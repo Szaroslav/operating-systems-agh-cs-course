@@ -50,12 +50,6 @@ void init(Message *msg, key_t key) {
     printf("[Client] Client ID: %d\n", cid);
 }
 
-// void on_init_response(Message *msg) {
-//     printf("[Client] Receive response from the server\n");
-//     cid = msg->client_id;
-//     printf("[Client] Client ID: %d\n", cid);
-// }
-
 void stop(Message *msg, bool send_msg) {
     if (send_msg) {
         printf("\n[Client] Sending STOP message to the server... ");
@@ -88,12 +82,6 @@ void list(Message *msg) {
         return;
     }
     printf("Succeed\n");
-
-    // printf("[Client] Waiting for response from the server... ");
-    // while (msgrcv(cqid, msg, MESSAGE_SIZE, MT_RESPONSE, 0) == -1);
-    // printf("Succeed\n");
-
-    // printf("%s", msg->message);
 }
 
 void on_list_response(Message *msg) {
@@ -184,7 +172,6 @@ int main(int argc, char **argv) {
         Message msg;
         while (true) {
             if (msgrcv(cqid, &msg, MESSAGE_SIZE, 0, 0) >= 0) {
-                // printf("!%ld\n", msg.mtype);
                 switch (msg.mtype) {
                     case MT_STOP:
                         kill(getppid(), SIGINT);
