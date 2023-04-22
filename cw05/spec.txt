@@ -1,0 +1,5 @@
+100%
+
+Uruchomienie testów: make test
+Testy w zadaniu 2 i 3 są długie (trwają przynajmniej kilka sekund) i nie wyświetlają od razu wyników,
+trzeba zaczekać na koniec wykonywania się wszystkich programów.
