@@ -5,12 +5,16 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <signal.h>
+#include <time.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 int sqid;
 int client_queues[MAX_CLIENTS_NUMBER] = { 0 };
 uint current_queue_size = 0;
 Message msg;
 struct msqid_ds qds;
+int fd;
 
 
 int get_client_id() {
@@ -22,6 +26,45 @@ int get_client_id() {
             return i;
 
     return -1;
+}
+
+void mt_to_string(MessageType mt, char *buf) {
+    switch (mt) {
+        case MT_STOP:
+            strcpy(buf, "STOP");
+            break;
+        case MT_INIT:
+            strcpy(buf, "INIT");
+            break;
+        case MT_LIST:
+            strcpy(buf, "LIST");
+            break;
+        case MT_SEND_ALL:
+            strcpy(buf, "2ALL");
+            break;
+        case MT_SEND_ONE:
+            strcpy(buf, "2ONE");
+            break;
+        default:
+            strcpy(buf, "");
+    }
+}
+
+void save_output_to_file() {
+    char curr_time[64];
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    snprintf(curr_time, 64, "%d-%02d-%02d %02d:%02d:%02d",
+        tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec
+    );
+
+    char mt[64];
+    mt_to_string(msg.mtype, mt);
+
+    char buffer[BUFSIZ];
+    buffer[0] = '\0';
+    int l = snprintf(buffer, BUFSIZ, "%s\tclient id: %d\t%s\n", curr_time, msg.client_id, mt);
+    write(fd, buffer, l);
 }
 
 void on_init(key_t key) {
@@ -147,6 +190,9 @@ void on_sigint(int signum) {
 }
 
 void onexit() {
+    if (fd > 0)
+        close(fd);
+
     msg.mtype = MT_STOP;
     for (int id = 0; id < MAX_CLIENTS_NUMBER; id++) {
         if (client_queues[id] > 0) {
@@ -175,6 +221,14 @@ int main(int argc, char **argv) {
 
     atexit(onexit);
 
+    printf("[Server] Opening output file... ");
+    fd = open("results.txt", O_CREAT | O_WRONLY, 0664);
+    if (fd == -1) {
+        printf("Failed\n");
+        return -1;
+    }
+    printf("Succeed\n");
+
     printf("[Server] Creating the server queue... ");
     key_t key = ftok(HOME, SERVER_ID);
     sqid = msgget(key, IPC_CREAT | 0666);
@@ -189,10 +243,12 @@ int main(int argc, char **argv) {
         // printf("?\n");
         // printf("%ld\n", msgrcv(sqid, &msg, MESSAGE_SIZE, MT_STOP, IPC_NOWAIT));
         if (msgrcv(sqid, &msg, MESSAGE_SIZE, MT_STOP, IPC_NOWAIT) >= 0) {
+            save_output_to_file();
             on_stop();
         }
         else if (msgrcv(sqid, &msg, MESSAGE_SIZE, MT_STOP, IPC_NOWAIT | MSG_EXCEPT) >= 0) {
             // printf("%ld\n", msg.mtype);
+            save_output_to_file();
             switch (msg.mtype) {
                 case MT_INIT:
                     on_init(msg.client_queue_key);
