@@ -1,0 +1,150 @@
+#include "common.h"
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+
+int client_queues[MAX_CLIENTS_NUMBER] = { 0 };
+uint current_queue_size = 0;
+Message msg;
+
+
+int get_client_id() {
+    if (current_queue_size >= MAX_CLIENTS_NUMBER)
+        return -1;
+    
+    for (int i = 0; i < MAX_CLIENTS_NUMBER; i++)
+        if (client_queues[i] == 0)
+            return i;
+
+    return -1;
+}
+
+void on_init(key_t key) {
+    printf("\n[Server] Receive INIT message\n");
+    printf("[Server] Client queue key: %d\n", key);
+
+    printf("[Server] Accessing a client queue from the key... ");
+
+    if (current_queue_size >= MAX_CLIENTS_NUMBER) {
+        printf("Failed\n");
+        return;
+    }
+
+    int cid = get_client_id();
+    if (cid == -1) {
+        printf("Failed\n");
+        return;
+    }
+
+    client_queues[cid] = msgget(key, IPC_CREAT);
+    if (client_queues[cid] == -1) {
+        printf("Failed\n");
+        return;
+    }
+    current_queue_size++;
+
+    printf("Succeed\n");
+
+    printf("[Server] Client ID: %d\n", cid);
+    printf("[Server] Client queue ID: %d\n", client_queues[cid]);
+
+    printf("[Server] Responding to client with its ID... ");
+    msg.mtype = MT_RESPONSE; msg.client_id = cid;
+    if (msgsnd(client_queues[cid], &msg, MESSAGE_SIZE, 0) != 0) {
+        printf("Failed\n");
+        return;
+    }
+    printf("Succeed\n");
+}
+
+void on_stop() {
+    printf("\n[Server] Receive STOP message\n");
+    printf("[Server] Client ID: %d\n", msg.client_id);
+
+    printf("[Server] Removing the client queue... ");
+
+    if (client_queues[msg.client_id] == 0) {
+        printf("Failed\n");
+        return;
+    }
+
+    client_queues[msg.client_id] = 0;
+    current_queue_size--;
+    printf("Succeed\n");
+}
+
+void on_list() {
+    printf("\n[Server] Receive LIST message\n");
+    printf("[Server] Client ID: %d\n", msg.client_id);
+
+    int cid = msg.client_id;
+
+    char buffer[MAX_MESSAGE_SIZE];
+    buffer[0] = '\0';
+    for (int id = 0; id < MAX_CLIENTS_NUMBER; id++) {
+        if (client_queues[id] == 0)
+            continue;
+        
+        char id_str[8];
+        sprintf(id_str, "%d", id);
+        strcat(buffer, id_str);
+        if (id == cid)
+            strcat(buffer, " (you)");
+        strcat(buffer, "\n");
+    }
+    
+    printf("[Server] Responding to client with list of all clients... ");
+    msg.mtype = MT_RESPONSE; strcpy(msg.message, buffer);
+    if (msgsnd(client_queues[cid], &msg, MESSAGE_SIZE, 0) == -1) {
+        printf("Failed\n");
+        return;
+    }
+    printf("Succeed\n");
+}
+
+void onexit() {
+    printf("[Server] Exiting...\n");
+}
+
+int main(int argc, char **argv) {
+    printf("[Server] Started\n");
+
+    atexit(onexit);
+
+    printf("[Server] Creating the server queue... ");
+    key_t key = ftok(HOME, SERVER_ID);
+    int sqid = msgget(key, IPC_CREAT | 0666);
+
+    if (sqid == -1) {
+        printf("Failed\n");
+        return -1;
+    }
+    printf("Succeed\n");
+
+    while (1) {
+        // printf("?\n");
+        // printf("%ld\n", msgrcv(sqid, &msg, MESSAGE_SIZE, MT_STOP, IPC_NOWAIT));
+        if (msgrcv(sqid, &msg, MESSAGE_SIZE, MT_STOP, IPC_NOWAIT) >= 0) {
+            on_stop();
+        }
+        else if (msgrcv(sqid, &msg, MESSAGE_SIZE, MT_STOP, IPC_NOWAIT | MSG_EXCEPT) >= 0) {
+            printf("%ld\n", msg.mtype);
+            switch (msg.mtype) {
+                case MT_INIT:
+                    on_init(msg.client_queue_key);
+                    break;
+                case MT_LIST:
+                    on_list();
+                    break;
+                case MT_SEND_ALL:
+                    break;
+                case MT_SEND_ONE:
+                    break;
+            }
+        }
+    }
+
+    return 0;
+}
