@@ -84,7 +84,7 @@ void on_init() {
         return;
     }
 
-    client_queues[cid] = mq_open(msg.client_queue_name, O_WRONLY | O_CREAT | O_EXCL);;
+    client_queues[cid] = mq_open(msg.client_queue_name, O_WRONLY | O_CREAT);
     if (client_queues[cid] == -1) {
         printf("Failed\n");
         return;
@@ -204,10 +204,10 @@ void onexit() {
     }
     
     printf("[Server] Deleting queue... ");
-    // if (msgctl(sqd, IPC_RMID, &qds) == -1) {
-    //     printf("Failed\n");
-    //     return;
-    // }
+    if (mq_unlink(SERVER_NAME) == -1) {
+        printf("Failed\n");
+        return;
+    }
     printf("Succeed\n");
 
     printf("\n[Server] Stopped\n");
@@ -233,16 +233,16 @@ int main(int argc, char **argv) {
     printf("[Server] Creating the server queue... ");
 
     struct mq_attr smq_attr = {
-        .mq_flags = O_NONBLOCK,
-        .mq_maxmsg = 32,
+        .mq_maxmsg = 8,
         .mq_msgsize = MESSAGE_SIZE,
         .mq_curmsgs = 0
     };
 
-    sqd = mq_open(SERVER_NAME, O_WRONLY | O_CREAT, 0664, &smq_attr);
+    sqd = mq_open(SERVER_NAME, O_RDWR | O_CREAT, 0664, &smq_attr);
 
     if (sqd == -1) {
         printf("Failed\n");
+        perror("[Server] Server queue");
         return -1;
     }
     printf("Succeed\n");
@@ -269,9 +269,6 @@ int main(int argc, char **argv) {
                     break;
             }
         }
-        // else if (msgrcv(sqd, &msg, MESSAGE_SIZE, MT_STOP, IPC_NOWAIT | MSG_EXCEPT) >= 0) {
-            
-        // }
     }
 
     return 0;
