@@ -14,6 +14,7 @@
 int cid;
 mqd_t cqd;
 mqd_t sqd;
+char cq_name[MAX_QUEUE_NAME_LENGTH];
 char buffer[BUFSIZ];
 pid_t receiver_pid;
 
@@ -50,24 +51,36 @@ void init(Message *msg, const char *name) {
 }
 
 void stop(Message *msg, bool send_msg) {
+    bool delete = true;
+
     if (send_msg) {
         printf("\n[Client] Sending STOP message to the server... ");
         msg->message_type = MT_STOP; msg->client_id = cid;
 
         if (mq_send(sqd, (char *) msg, MESSAGE_SIZE, MT_STOP) == -1) {
             printf("Failed\n");
+            delete = false;
         }
         else {
             printf("Succeed\n");
         }
     }
 
-    // printf("[Client] Deleting queue... ");
-    // if (msgctl(cqid, IPC_RMID, &qds) == -1) {
-    //     printf("Failed\n");
-    //     return;
-    // }
-    // printf("Succeed\n");
+    printf("[Client] Deleting queue... ");
+    if (delete) {
+        if (mq_unlink(cq_name) == -1) {
+            printf("Failed\n");
+            return;
+        }
+        printf("Succeed\n");
+    }
+    else {
+        if (mq_close(cqd) == -1) {
+            printf("Failed\n");
+            return;
+        }
+        printf("Succeed\n");
+    }
     
     exit(1);
 }
@@ -141,15 +154,14 @@ int main(int argc, char **argv) {
     printf("[Client] Creating a client queue... ");
 
     struct mq_attr cmq_attr = {
-        .mq_flags = O_NONBLOCK,
-        .mq_maxmsg = 32,
+        .mq_maxmsg = 8,
         .mq_msgsize = MESSAGE_SIZE,
         .mq_curmsgs = 0,
     };
 
-    char name[MAX_QUEUE_NAME_LENGTH] = "";
-    snprintf(name, MAX_QUEUE_NAME_LENGTH, "/client%d", rand() % 254 + 2);
-    cqd = mq_open(name, O_RDONLY | O_CREAT, 0664, &cmq_attr);
+    cq_name[0] = '\0';
+    snprintf(cq_name, MAX_QUEUE_NAME_LENGTH, "/client%d", rand() % 254 + 2);
+    cqd = mq_open(cq_name, O_RDWR | O_CREAT, 0664, &cmq_attr);
     if (cqd == -1) {
         printf("Failed\n");
         return -1;
@@ -160,16 +172,17 @@ int main(int argc, char **argv) {
     printf("[Client] Client queue file descriptor: %d\n", cqd);
 
     printf("[Client] Accessing the server queue... ");
-    sqd = mq_open(SERVER_NAME, O_WRONLY | O_CREAT | O_EXCL);
+    sqd = mq_open(SERVER_NAME, O_WRONLY | O_CREAT);
 
     if (sqd == -1) {
         printf("Failed\n");
+        perror("[Client] Server queue");
         return -1;
     }
     printf("Succeed\n");
 
     Message msg;
-    init(&msg, name);
+    init(&msg, cq_name);
 
     receiver_pid = fork();
     if (receiver_pid == 0) {
