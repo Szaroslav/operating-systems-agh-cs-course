@@ -34,7 +34,7 @@ MessageType to_message_type(const char *str) {
 
 void init(Message *msg, const char *name) {
     printf("\n[Client] Sending INIT message to the server... ");
-    msg->message_type = MT_INIT; msg->client_queue_name = name;
+    msg->message_type = MT_INIT; strcpy(msg->client_queue_name, name);
 
     if (mq_send(sqd, (char *) msg, MESSAGE_SIZE, DEFAULT_PRIORITY) == -1) {
         printf("Failed\n");
