@@ -2,9 +2,8 @@
 #include "semaphore.h"
 #include "shared_mem.h"
 #include <stdio.h>
-
-#define HAIRDRESSER_EXEC    "build/hairdresser"
-#define CLIENT_EXEC         "build/client"
+#include <unistd.h>
+#include <sys/wait.h>
 
 int sem_hairdresser;
 int sem_chair;
@@ -16,7 +15,7 @@ void delete_semaphores();
 int main(int argc, char **argv) {
     setbuf(stdout, NULL);
 
-    printf("Simulation started\n");
+    printf("Simulation has been started\n\n");
 
     create_semaphores();
 
@@ -25,10 +24,26 @@ int main(int argc, char **argv) {
     if (queue == NULL)
         return -1;
 
+    for (int i = 0; i < HAIRDRESSERS_TOTAL; i++) {
+        if (fork() == 0) {
+            execl(HAIRDRESSER_PATH, HAIRDRESSER_EXEC, (char *) NULL);
+        }
+    }
+
+    for (int i = 0; i < CLIENTS_TOTAL; i++) {
+        if (fork() == 0) {
+            execl(CLIENT_PATH, CLIENT_EXEC, (char *) NULL);
+        }
+    }
+
+    while(wait(NULL) > 0);
+
     detach_shared_mem(queue);
     delete_shared_mem(QUEUE_NAME);
 
     delete_semaphores();
+
+    printf("\nSimulation has been finished\n");
 
     return 0;
 }

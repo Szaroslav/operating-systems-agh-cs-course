@@ -1,8 +1,11 @@
 #include "common.h"
 #include "semaphore.h"
+#include "shared_mem.h"
+#include "queue.h"
 #include <stdio.h>
-#include <stdbool.h>
+#include <string.h>
 #include <unistd.h>
+#include <time.h>
 
 int sem_hairdresser;
 int sem_chair;
@@ -11,19 +14,30 @@ int sem_queue;
 void open_semaphores();
 
 int main(int argc, char **argv) {
-    printf("[Hairdresser%d] Spawned\n", getpid());
+    setbuf(stdout, NULL);
+    srand(time(NULL));
+
+    printf("[Client %d] Spawned\n", getpid());
 
     open_semaphores();
-
-    while (true) {
-        hold(sem_hairdresser);
-        printf("[Hairdresser%d] Cutting a client head's hair... ", getpid());
-
-        usleep(2000);
-
-        release(sem_hairdresser);
-        printf("Succeeded\n");
+    
+    char *queue = attach_shared_mem(QUEUE_NAME);
+    if (queue == NULL)
+        return -1;
+    if (strlen(queue) >= QUEUE_SIZE) {
+        printf("[Client %d] Queue is full\n", getpid());
+        return 0;
     }
+
+    hold(sem_queue);
+
+    char haircut = rand() % 256;
+    queue_push(queue, haircut);
+
+    release(sem_hairdresser);
+    release(sem_chair);
+
+    detach_shared_mem(queue);
 
     return 0;
 }

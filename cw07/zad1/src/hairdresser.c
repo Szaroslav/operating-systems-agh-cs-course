@@ -1,16 +1,64 @@
 #include "common.h"
 #include "semaphore.h"
+#include "shared_mem.h"
+#include "queue.h"
+#include <stdbool.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <time.h>
 
-Status status;
+#define HAIRCUT_TIME_MSEC 250000
+
+int sem_hairdresser;
+int sem_chair;
+int sem_queue;
+
+void open_semaphores();
 
 int main(int argc, char **argv) {
-    printf("[Hairdresser] Spawned\n");
+    setbuf(stdout, NULL);
+    srand(time(NULL));
 
-    status = S_IDLE;
+    printf("[Hairdresser %d] Spawned\n", getpid());
+
+    open_semaphores();
     
-    smp_init(HAIRDRESSER);
-    smp_open();
+    char *queue = attach_shared_mem(QUEUE_NAME);
+    if (queue == NULL)
+        return -1;
+
+    while (true) {
+        hold(sem_hairdresser);
+
+        char haircut = queue_pop(queue);
+
+        printf("[Hairdresser %d] Estimated processing time for haircut no. %hhd is %f s\n",
+            getpid(), haircut, haircut * HAIRCUT_TIME_MSEC / 1000000.0
+        );
+        printf("[Hairdresser %d] Processing haircut no. %hhd... ", getpid(), haircut);
+        usleep(haircut * HAIRCUT_TIME_MSEC);
+        printf("Finished\n");
+
+        release(sem_chair);
+        release(sem_queue);
+
+        if (queue_empty(queue)) {
+            // Wait for potential clients spawn
+            sleep(1);
+            if (queue_empty(queue))
+                break;
+        }
+    }
+
+    printf("[Hairdresser %d] Job finished, going to sleep\n", getpid());
+
+    detach_shared_mem(queue);
 
     return 0;
+}
+
+void open_semaphores() {
+    sem_hairdresser = open_semaphore(HAIRDRESSER_SEM_NAME);
+    sem_chair = open_semaphore(CHAIR_SEM_NAME);
+    sem_queue = open_semaphore(QUEUE_SEM_NAME);
 }
