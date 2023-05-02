@@ -13,6 +13,7 @@
 #define HAIRDRESSER_SEM_NAME    "1"
 #define CHAIR_SEM_NAME          "2"
 #define QUEUE_SEM_NAME          "3"
+#define QUEUE_NAME              "4"
 
 typedef enum Person {
     HAIRDRESSER = 0,

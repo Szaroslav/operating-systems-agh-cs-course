@@ -1,4 +1,5 @@
 #include "shared_mem.h"
+#include "common.h"
 #include <stdio.h>
 #include <sys/shm.h>
 #include <sys/ipc.h>
@@ -6,7 +7,7 @@
 
 
 key_t generate_key(const char *name) {
-    key_t key = ftok(name, 1);
+    key_t key = ftok(HOME, name[0]);
     if (key == -1) {
         fprintf(stderr, "Failed\n");
         perror("Failed on calling ftok()\n");
@@ -23,7 +24,7 @@ int create_shared_mem(const char *name, int size) {
     if (key == -1)
         return key;
 
-    int shm_id = shmget(key, size, 0664 | IPC_CREAT);
+    int shm_id = shmget(key, size, 0664 | IPC_CREAT | IPC_EXCL);
     if (shm_id == -1) {
         fprintf(stderr, "Failed\n");
         perror("Failed on calling shmget()\n");
@@ -35,24 +36,20 @@ int create_shared_mem(const char *name, int size) {
 }
 
 int open_shared_mem(const char *name) {
-    printf("[Shared memory] Opening the shared memory... ");
-
     key_t key = generate_key(name);
     if (key == -1)
         return key;
     
-    int shm_id = shmget(key, 0, IPC_CREAT | IPC_EXCL);
+    int shm_id = shmget(key, 0, IPC_CREAT);
     if (shm_id == -1) {
-        fprintf(stderr, "Failed\n");
         perror("Failed on calling shmget()\n");
         return -1;
     }
-    fprintf(stdout, "Succeeded\n");
 
     return shm_id;
 }
 
-char* attach_shared_mem(const char *name, int size) {
+char* attach_shared_mem(const char *name) {
     printf("[Shared memory] Attaching the shared memory... ");
 
     int shm_id = open_shared_mem(name);
@@ -64,6 +61,7 @@ char* attach_shared_mem(const char *name, int size) {
         fprintf(stderr, "Failed\n");
         return NULL;
     }
+    fprintf(stdout, "Succeeded\n");
 
     return shm;
 }
@@ -88,7 +86,7 @@ bool delete_shared_mem(const char *name) {
     if (shm_id == -1)
         return false;
 
-    if (shmctl(shm_id, IPC_RMID, NULL) != -1) {
+    if (shmctl(shm_id, IPC_RMID, NULL) == -1) {
         fprintf(stderr, "Failed\n");
         perror("Failed on calling shmctl()\n");
         return false;

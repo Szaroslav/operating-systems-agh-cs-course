@@ -7,11 +7,11 @@
 #include <sys/ipc.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <errno.h>
 
-char person_buf[128];
 
 int create_semaphore(const char* name, int initial_value) {
-    printf("[%s] Creating a semaphore... \n", person_buf);
+    printf("Creating a semaphore... ");
 
     key_t key = ftok(HOME, name[0]);
     if (key == -1) {
@@ -20,7 +20,7 @@ int create_semaphore(const char* name, int initial_value) {
         return -1;
     }
 
-    int sem_id = semget(key, 1, 0664 | O_CREAT);
+    int sem_id = semget(key, 1, 0664 | IPC_CREAT | IPC_EXCL);
     if (sem_id == -1) {
         fprintf(stderr, "Failed\n");
         perror("Failed on calling semget()\n");
@@ -38,23 +38,18 @@ int create_semaphore(const char* name, int initial_value) {
 }
 
 int open_semaphore(const char* name) {
-    printf("[%s] Opening the semaphore... \n", person_buf);
-
     key_t key = ftok(HOME, name[0]);
     if (key == -1) {
-        fprintf(stderr, "Failed\n");
         perror("Failed on calling ftok()\n");
         return -1;
     }
 
-    int sem_id = semget(key, 1, O_CREAT | O_EXCL);
+    int sem_id = semget(key, 1, IPC_CREAT);
     if (sem_id == -1) {
-        fprintf(stderr, "Failed\n");
         perror("Failed on calling semget()\n");
         return -1;
     }
 
-    fprintf(stdout, "Succeeded\n");
     return sem_id;
 }
 
@@ -82,17 +77,26 @@ void hold(int sem_id) {
     fprintf(stdout, "Succeeded\n");
 }
 
-void smp_close(const char *name) {
-    printf("Closing the semephore... ");
+bool unlink_semaphore(const char *name) {
+    return true;
+}
+
+bool delete_semaphore(const char *name) {
+    printf("Deleting the semephore... ");
+
+    if (!unlink_semaphore(name))
+        return false;
 
     int sem_id = open_semaphore(name);
     if (sem_id == -1)
-        return;
-    
+        return false;
+
     if (semctl(sem_id, 0, IPC_RMID) == -1) {
         fprintf(stderr, "Failed\n");
         perror("Failed on calling semctl()");
-        return;
+        return false;
     }
     fprintf(stdout, "Succeeded\n");
+
+    return true;
 }
