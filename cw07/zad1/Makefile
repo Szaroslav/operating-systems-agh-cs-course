@@ -1,28 +1,25 @@
-CC = gcc -Wall -O3
-SRC_DIR = src
-BUILD_DIR = build
-COMMON_LIB = common
-SEM_LIB = semaphore
-SHARED_MEM_LIB = shared_mem
-LIBS = $(SRC_DIR)/$(SEM_LIB).c $(SRC_DIR)/$(SHARED_MEM_LIB).c
+CC				= gcc -Wall -O3
+SRC_DIR			= src
+BUILD_DIR		= build
+COMMON_LIB		= common
+SEM_LIB			= semaphore
+SHARED_MEM_LIB	= shared_mem
+QUEUE_LIB		= queue
+LIBS			= $(SRC_DIR)/$(SEM_LIB).c $(SRC_DIR)/$(SHARED_MEM_LIB).c $(SRC_DIR)/$(QUEUE_LIB).c
 
-build: clean buildir
-	$(CC) $(SRC_DIR)/simulation.c $(LIBS) -lrt -lpthread -o $(BUILD_DIR)/simulation
+build: clean buildir simulation hairdresser client
 
 buildir:
 	mkdir $(BUILD_DIR)
 
-common:
-	$(CC) -c $(SRC_DIR)/$(COMMON_LIB).c -o $(BUILD_DIR)/$(COMMON_LIB).o
-	ar rcs $(BUILD_DIR)/lib$(COMMON_LIB).a $(BUILD_DIR)/$(COMMON_LIB).o
+simulation:
+	$(CC) $(SRC_DIR)/simulation.c $(LIBS) -lrt -lpthread -o $(BUILD_DIR)/simulation
 
-semaphore:
-	$(CC) -c $(SRC_DIR)/$(SEM_LIB).c -o $(BUILD_DIR)/$(SEM_LIB).o
-	ar rcs $(BUILD_DIR)/lib$(SEM_LIB).a $(BUILD_DIR)/$(SEM_LIB).o
+hairdresser:
+	$(CC) $(SRC_DIR)/hairdresser.c $(LIBS) -lrt -lpthread -o $(BUILD_DIR)/hairdresser
 
-shared_mem:
-	$(CC) -c $(SRC_DIR)/$(SHARED_MEM_LIB).c -o $(BUILD_DIR)/$(SHARED_MEM_LIB).o
-	ar rcs $(BUILD_DIR)/lib$(SHARED_MEM_LIB).a $(BUILD_DIR)/$(SHARED_MEM_LIB).o
+client:
+	$(CC) $(SRC_DIR)/client.c $(LIBS) -lrt -lpthread -o $(BUILD_DIR)/client
 
 clean:
 	rm -rf $(BUILD_DIR)

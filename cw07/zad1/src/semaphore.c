@@ -54,27 +54,19 @@ int open_semaphore(const char* name) {
 }
 
 void release(int sem_id) {
-    printf("Releasing the semephore... ");
-
     struct sembuf sem_buf = { .sem_num = 0, .sem_op = 1, .sem_flg = 0 };
     if (semop(sem_id, &sem_buf, 1) == -1) {
-        fprintf(stderr, "Failed\n");
-        perror("Failed on calling semop()");
+        perror("Failed release the semaphore on calling semop()");
         return;
     }
-    fprintf(stdout, "Succeeded\n");
 }
 
 void hold(int sem_id) {
-    printf("Holding the semephore... ");
-
     struct sembuf sem_buf = { .sem_num = 0, .sem_op = -1, .sem_flg = 0 };
     if (semop(sem_id, &sem_buf, 1) == -1) {
-        fprintf(stderr, "Failed\n");
-        perror("Failed on calling semop()");
+        perror("Failed hold the semaphore on calling semop()");
         return;
     }
-    fprintf(stdout, "Succeeded\n");
 }
 
 bool unlink_semaphore(const char *name) {
