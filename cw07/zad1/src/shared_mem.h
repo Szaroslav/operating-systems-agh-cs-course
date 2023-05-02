@@ -1,8 +1,12 @@
 #ifndef __SHARED_MEM_H__
 #define __SHARED_MEM_H__
 
-void smem_open();
+#include <stdbool.h>
 
-void smem_close();
+int create_shared_mem(const char*, int);
+int open_shared_mem(const char*);
+char* set_shared_mem(const char*, int);
+bool detach_shared_mem(char*);
+bool delete_shared_mem(const char*);
 
 #endif // __SHARED_MEM_H__
