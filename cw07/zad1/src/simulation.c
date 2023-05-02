@@ -20,6 +20,6 @@ int main(int argc, char **argv) {
 
 void create_semaphores() {
     sem_hairdresser = create_semaphore(HAIRDRESSER_SEM_NAME, HAIRDRESSERS_TOTAL);
-    sem_chair = create_semaphore(CHAIR_SEM_NAME, HAIRDRESSERS_TOTAL);
-    sem_queue = create_semaphore(QUEUE_SEM_NAME, HAIRDRESSERS_TOTAL);
+    sem_chair = create_semaphore(CHAIR_SEM_NAME, CHAIRS_TOTAL);
+    sem_queue = create_semaphore(QUEUE_SEM_NAME, QUEUE_SIZE);
 }
