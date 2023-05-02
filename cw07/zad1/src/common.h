@@ -2,13 +2,29 @@
 #define __COMMON_H__
 
 #include <stdlib.h>
-#include <sys/types.h>
 
-#define HOME                        getenv("HOME")
-#define HAIRDRESSERS_SEMAPHORE_ID   1
-#define HAIRDRESSERS_NUMBER         8   
-#define CHAIRS_NUMBER               8
-#define WAITING_ROOM_SLOTS          8
+#define HOME                    getenv("HOME")
+#define SEMAPHORE_ID            1
+#define HAIRDRESSERS_TOTAL      4               // M
+#define CHAIRS_TOTAL            4               // N
+#define QUEUE_SIZE              8               // P
+#define CLIENTS_TOTAL           16
+
+#define HAIRDRESSER_SEM_NAME    "1"
+#define CHAIR_SEM_NAME          "2"
+#define QUEUE_SEM_NAME          "3"
+
+typedef enum Person {
+    HAIRDRESSER = 0,
+    CLIENT      = 1
+} Person;
+
+typedef enum Status {
+    S_IDLE      = 0,
+    S_WORKING   = 1,
+    S_CUTTING   = 2,
+    S_WAITING   = 3
+} Status;
 
 // typedef enum MessageType {
 //     MT_INIT     = 1,
