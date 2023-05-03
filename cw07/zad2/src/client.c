@@ -15,7 +15,7 @@ void open_semaphores();
 
 int main(int argc, char **argv) {
     setbuf(stdout, NULL);
-    srand(time(NULL));
+    srand(time(NULL) + getpid());
 
     printf("[Client %d] Spawned\n", getpid());
 
@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 
     hold(sem_queue);
 
-    char haircut = rand() % 256;
+    char haircut = (char) (rand() % 128);
     queue_push(queue, haircut);
 
     release(sem_hairdresser);

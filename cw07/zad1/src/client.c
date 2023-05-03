@@ -7,21 +7,21 @@
 #include <unistd.h>
 #include <time.h>
 
-int sem_hairdresser;
-int sem_chair;
-int sem_queue;
+semaphore_t sem_hairdresser;
+semaphore_t sem_chair;
+semaphore_t sem_queue;
 
 void open_semaphores();
 
 int main(int argc, char **argv) {
     setbuf(stdout, NULL);
-    srand(time(NULL));
+    srand(time(NULL) + getpid());
 
     printf("[Client %d] Spawned\n", getpid());
 
     open_semaphores();
     
-    char *queue = attach_shared_mem(QUEUE_NAME);
+    char *queue = attach_shared_mem(QUEUE_NAME, QUEUE_SIZE);
     if (queue == NULL)
         return -1;
     if (strlen(queue) >= QUEUE_SIZE) {
@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 
     hold(sem_queue);
 
-    char haircut = rand() % 256;
+    char haircut = (char) (rand() % 128);
     queue_push(queue, haircut);
 
     release(sem_hairdresser);

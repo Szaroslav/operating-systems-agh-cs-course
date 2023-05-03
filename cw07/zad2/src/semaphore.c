@@ -113,12 +113,10 @@ semaphore_t create_semaphore(const char* name, int initial_value) {
 semaphore_t open_semaphore(const char* name) {
     semaphore_t sem_id = sem_open(name, O_CREAT);
     if (sem_id == SEM_FAILED) {
-        fprintf(stderr, "Failed\n");
         perror("Failed on calling sem_open()");
         return SEM_FAILED;
     }
-
-    fprintf(stdout, "Succeeded\n");
+    
     return sem_id;
 }
 
