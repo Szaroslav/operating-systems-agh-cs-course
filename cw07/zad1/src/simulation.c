@@ -5,9 +5,9 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-int sem_hairdresser;
-int sem_chair;
-int sem_queue;
+semaphore_t sem_hairdresser;
+semaphore_t sem_chair;
+semaphore_t sem_queue;
 
 void create_semaphores();
 void delete_semaphores();
@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
     create_semaphores();
 
     create_shared_mem(QUEUE_NAME, QUEUE_SIZE + 1);
-    char *queue = attach_shared_mem(QUEUE_NAME);
+    char *queue = attach_shared_mem(QUEUE_NAME, QUEUE_SIZE);
     if (queue == NULL)
         return -1;
 

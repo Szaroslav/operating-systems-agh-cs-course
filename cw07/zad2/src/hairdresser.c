@@ -32,12 +32,12 @@ int main(int argc, char **argv) {
 
         char haircut = queue_pop(queue);
 
-        printf("[Hairdresser %d] Estimated processing time for haircut no. %hhd is %f s\n",
+        printf("[Hairdresser %d] Estimated processing time for haircut no. %hhd is %.2f s\n",
             getpid(), haircut, haircut * HAIRCUT_TIME_MSEC / 1000000.0
         );
-        printf("[Hairdresser %d] Processing haircut no. %hhd... ", getpid(), haircut);
+        printf("[Hairdresser %d] Processing haircut no. %hhd...\n", getpid(), haircut);
         usleep(haircut * HAIRCUT_TIME_MSEC);
-        printf("Finished\n");
+        printf("[Hairdresser %d] Finished processing haircut no. %hhd\n", getpid(), haircut);
 
         release(sem_chair);
         release(sem_queue);

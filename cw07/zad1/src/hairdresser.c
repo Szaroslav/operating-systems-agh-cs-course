@@ -9,9 +9,9 @@
 
 #define HAIRCUT_TIME_MSEC 250000
 
-int sem_hairdresser;
-int sem_chair;
-int sem_queue;
+semaphore_t sem_hairdresser;
+semaphore_t sem_chair;
+semaphore_t sem_queue;
 
 void open_semaphores();
 
@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
 
     open_semaphores();
     
-    char *queue = attach_shared_mem(QUEUE_NAME);
+    char *queue = attach_shared_mem(QUEUE_NAME, QUEUE_SIZE);
     if (queue == NULL)
         return -1;
 
@@ -32,12 +32,12 @@ int main(int argc, char **argv) {
 
         char haircut = queue_pop(queue);
 
-        printf("[Hairdresser %d] Estimated processing time for haircut no. %hhd is %f s\n",
+        printf("[Hairdresser %d] Estimated processing time for haircut no. %hhd is %.2f s\n",
             getpid(), haircut, haircut * HAIRCUT_TIME_MSEC / 1000000.0
         );
-        printf("[Hairdresser %d] Processing haircut no. %hhd... ", getpid(), haircut);
+        printf("[Hairdresser %d] Processing haircut no. %hhd...\n", getpid(), haircut);
         usleep(haircut * HAIRCUT_TIME_MSEC);
-        printf("Finished\n");
+        printf("[Hairdresser %d] Finished processing haircut no. %hhd\n", getpid(), haircut);
 
         release(sem_chair);
         release(sem_queue);
