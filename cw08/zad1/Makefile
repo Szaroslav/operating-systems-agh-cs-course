@@ -6,9 +6,9 @@ SOURCE_FILES = $(SRC_DIR)/grid.c $(SRC_DIR)/life.c
 
 all: life
 	
-life: $(SRC_DIR)/grid.c $(SRC_DIR)/life.c
+life: clean
 	mkdir $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(SOURCE_FILES) -o $(BUILD_DIR)/life -lncursesw
+	$(CC) $(CFLAGS) $(SOURCE_FILES) -o $(BUILD_DIR)/life -lncursesw -lpthread
 	
 clean:
 	rm -rf $(BUILD_DIR)

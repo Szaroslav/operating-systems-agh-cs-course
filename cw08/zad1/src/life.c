@@ -25,7 +25,7 @@ int main()
 		usleep(500 * 1000);
 
 		// Step simulation
-		update_grid(foreground, background);
+		update_grid_concurrent(foreground, background);
 		tmp = foreground;
 		foreground = background;
 		background = tmp;
@@ -34,6 +34,7 @@ int main()
 	endwin(); // End curses mode
 	destroy_grid(foreground);
 	destroy_grid(background);
+	free_memory();
 
 	return 0;
 }
