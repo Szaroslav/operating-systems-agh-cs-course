@@ -1,10 +1,14 @@
 CC = gcc
-CFLAGS = -Wall
+CFLAGS = -Wall -O3
+SRC_DIR = src
+BUILD_DIR = build
+SOURCE_FILES = $(SRC_DIR)/grid.c $(SRC_DIR)/life.c
 
 all: life
 	
-life: grid.c life.c
-	$(CC) $(CFLAGS) grid.c life.c -o life -lncursesw
+life: $(SRC_DIR)/grid.c $(SRC_DIR)/life.c
+	mkdir $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(SOURCE_FILES) -o $(BUILD_DIR)/life -lncursesw
 	
 clean:
-	rm -f life
+	rm -rf $(BUILD_DIR)
