@@ -102,14 +102,14 @@ void update_grid(char *src, char *dst)
 }
 
 // ==================================================
-// ==================================================
+// ================== UNIVERSAL =====================
 // ==================================================
 
 typedef struct ThreadArgs {
     char *src;
     char *dst;
-    uint row;
-    uint col;
+    uint start;
+    uint end;
 } ThreadArgs;
 
 pthread_t *threads = NULL;
@@ -126,10 +126,11 @@ void ignore_handler(int signum) {}
 void* update_cell(void *args)
 {
     ThreadArgs *thread_args = (ThreadArgs*) args;
-    uint i = thread_args->row, j = thread_args->col;
+    uint start = thread_args->start, end = thread_args->end;
 
     while (true) {
-        thread_args->dst[i * grid_width + j] = is_alive(i, j, thread_args->src);
+        for (int k = start; k <= end; k++)
+            thread_args->dst[k] = is_alive(k / grid_width, k % grid_height, thread_args->src);
 
         pause();
 
@@ -141,7 +142,7 @@ void* update_cell(void *args)
     return NULL;
 }
 
-void update_grid_concurrent(char *src, char *dst)
+void update_grid_concurrent(char *src, char *dst, int threads_no)
 {
     // Init threads
     if (threads == NULL) {
@@ -150,19 +151,24 @@ void update_grid_concurrent(char *src, char *dst)
         action.sa_handler = ignore_handler;
         sigaction(SIGUSR1, &action, NULL);
 
-        threads = malloc(grid_width * grid_height * sizeof(pthread_t));
-        args = malloc(grid_width * grid_height * sizeof(ThreadArgs));
+        const int A = grid_width * grid_height;
+        threads_no = threads_no > 0 ? (threads_no <= A ? threads_no : A) : A;
 
-        for (int i = 0; i < grid_width * grid_height; i++) {
+        threads = malloc(threads_no * sizeof(pthread_t));
+        args = malloc(threads_no * sizeof(ThreadArgs));
+
+        int r = A % threads_no, block_size;
+        for (int i = 0; i < threads_no; i++) {
+            block_size = A / threads_no + (r-- > 0 ? 1 : 0);
             args[i].src = src;
             args[i].dst = dst;
-            args[i].row = i / grid_width;
-            args[i].col = i % grid_height;
+            args[i].start = i > 0 ? args[i - 1].end + 1 : 0;
+            args[i].end = args[i].start + block_size - 1;
 
             pthread_create(&threads[i], NULL, update_cell, (void*) &args[i]);
         }
     }
     
-    for (int i = 0; i < grid_width * grid_height; i++)
+    for (int i = 0; i < threads_no; i++)
         pthread_kill(threads[i], SIGUSR1);
 }
