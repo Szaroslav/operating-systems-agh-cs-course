@@ -146,7 +146,7 @@ void update_grid_concurrent(char *src, char *dst, int threads_no)
 {
     // Init threads
     if (threads == NULL) {
-        struct sigaction action;
+        static struct sigaction action;
         sigemptyset(&action.sa_mask);
         action.sa_handler = ignore_handler;
         sigaction(SIGUSR1, &action, NULL);

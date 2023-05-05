@@ -9,6 +9,6 @@ all: life
 life: clean
 	mkdir $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(SOURCE_FILES) -o $(BUILD_DIR)/life -lncursesw -lpthread
-	
+
 clean:
 	rm -rf $(BUILD_DIR)
