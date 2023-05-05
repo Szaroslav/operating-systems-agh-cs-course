@@ -47,7 +47,6 @@ void init_grid(char *grid)
 
 bool is_alive(int row, int col, char *grid)
 {
-
     int count = 0;
     for (int i = -1; i <= 1; i++)
     {
