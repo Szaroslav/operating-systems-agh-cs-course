@@ -6,7 +6,7 @@
 
 #define REINDEER_NUMBER     9
 #define ELF_NUMBER          10
-#define MAX_PROBLEM_NUMBER  3
+#define MAX_ISSUE_NUMBER  3
 #define SEC_TO_USEC         1000000
 #define SMALL_BUFFER_SIZE   32
 #define BUFFER_SIZE         128
@@ -19,13 +19,15 @@ typedef struct ThreadArgs {
     int index;
     int seed;
 
-    int *delivery_count;
     int *reindeers_at_north_pole;
     int *delivery_duration;
+    int *waiting_elves;
+    int *waiting_elf_count;
 
     pthread_mutex_t *mutex;
     pthread_cond_t *santa_wakeup_condition;
     pthread_cond_t *reindeer_delivery_condition;
+    pthread_cond_t *elf_issue_condition;
 } ThreadArgs;
 
 typedef struct IntervalUSec {

@@ -6,12 +6,15 @@
 #include <pthread.h>
 #include <time.h>
 
-int delivery_count = 0;
 int reindeers_at_north_pole = REINDEER_NUMBER;
 int delivery_duration = 0;
+int waiting_elves[MAX_ISSUE_NUMBER];
+int waiting_elf_count = 0;
+
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t santa_wakeup_condition = PTHREAD_COND_INITIALIZER;
 pthread_cond_t reindeer_delivery_condition = PTHREAD_COND_INITIALIZER;
+pthread_cond_t elf_issue_condition = PTHREAD_COND_INITIALIZER;
 
 ThreadArgs *set_thread_args(ThreadArgs *, const int);
 pthread_t spawn_santa(ThreadArgs *);
@@ -44,13 +47,15 @@ ThreadArgs *set_thread_args(ThreadArgs *args, const int index) {
     args->index = index;
     args->seed = rand();
 
-    args->delivery_count = &delivery_count;
     args->reindeers_at_north_pole = &reindeers_at_north_pole;
     args->delivery_duration = &delivery_duration;
+    args->waiting_elves = waiting_elves;
+    args->waiting_elf_count = &waiting_elf_count;
 
     args->mutex = &mutex;
     args->santa_wakeup_condition = &santa_wakeup_condition;
     args->reindeer_delivery_condition = &reindeer_delivery_condition;
+    args->elf_issue_condition = &elf_issue_condition;
 
     return args;
 }
