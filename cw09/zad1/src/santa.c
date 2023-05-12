@@ -6,6 +6,7 @@
 
 void *santa_routine(void *arg) {
     ThreadArgs *args = (ThreadArgs *) arg;
+    int delivery_count = 0;
     char msg_buffer[BUFFER_SIZE] = "";
 
     print_spawn(SANTA_PREFIX);
@@ -29,6 +30,8 @@ void *santa_routine(void *arg) {
         if (*args->delivery_count >= 3) {
             pthread_exit(NULL);
         }
+
+        pthread_cond_b
     }
 
     return NULL;

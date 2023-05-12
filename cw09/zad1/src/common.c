@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-const IntervalUSec SANTA_SOLUTION_DURATION = { 1 * SEC_TO_USEC, 2 * SEC_TO_USEC };
-const IntervalUSec SANTA_DELIVERY_DURATION = { 2 * SEC_TO_USEC, 4 * SEC_TO_USEC };
-const IntervalUSec REINDEER_HOLIDAYS_DURATION = { 5 * SEC_TO_USEC, 10 * SEC_TO_USEC };
-const IntervalUSec ELF_WORK_DURATION = { 2 * SEC_TO_USEC,  5 * SEC_TO_USEC };
+const IntervalUSec SANTA_SOLUTION_DURATION      = { 1 * SEC_TO_USEC, 2 * SEC_TO_USEC };
+const IntervalUSec SANTA_DELIVERY_DURATION      = { 2 * SEC_TO_USEC, 4 * SEC_TO_USEC };
+const IntervalUSec REINDEER_HOLIDAYS_DURATION   = { 5 * SEC_TO_USEC, 10 * SEC_TO_USEC };
+const IntervalUSec ELF_WORK_DURATION            = { 2 * SEC_TO_USEC,  5 * SEC_TO_USEC };
 
 int range(const int start, const int end) {
     return rand() % (end - start) + start;
