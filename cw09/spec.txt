@@ -1,0 +1,5 @@
+100%
+
+Uruchomić program można na 2 sposoby:
+1. make test
+2. make all; build/santa
