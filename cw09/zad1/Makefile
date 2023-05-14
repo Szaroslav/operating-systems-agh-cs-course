@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -O3
 SRC_DIR = src
 BUILD_DIR = build
-SOURCE_FILES = $(SRC_DIR)/world.c $(SRC_DIR)/common.c $(SRC_DIR)/santa.c $(SRC_DIR)/reindeer.c
+SOURCE_FILES = $(SRC_DIR)/world.c $(SRC_DIR)/common.c $(SRC_DIR)/santa.c $(SRC_DIR)/reindeer.c $(SRC_DIR)/elf.c
 
 all: santa
 	
