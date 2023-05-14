@@ -13,8 +13,11 @@ void *reindeer_routine(void *arg) {
     pthread_mutex_lock(args->mutex);
     snprintf(prefix, SMALL_BUFFER_SIZE, REINDEER_PREFIX " %d", args->index);
     print_spawn(prefix);
+    pthread_mutex_unlock(args->mutex);
 
     while (true) {
+        pthread_mutex_lock(args->mutex);
+
         // Go on the desired holidays
         (*args->reindeers_at_north_pole)--;
         if (*args->reindeers_at_north_pole == 0) {
@@ -25,6 +28,7 @@ void *reindeer_routine(void *arg) {
             );
             print_msg(REINDEER_GENERAL_PREFIX, msg_buffer);
         }
+        
         pthread_mutex_unlock(args->mutex);
         
         // Rest for a some peroid of time
