@@ -7,15 +7,17 @@
 #include <pthread.h>
 #include <time.h>
 
-int reindeers_at_north_pole = REINDEER_NUMBER;
-int delivery_duration = 0;
+// Shared variables
+int reindeers_at_north_pole                 = REINDEER_NUMBER;
+int delivery_duration                       = 0;
 int waiting_elves[MAX_ISSUE_NUMBER];
-int waiting_elf_count = 0;
+int waiting_elf_count                       = 0;
 
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t santa_wakeup_condition = PTHREAD_COND_INITIALIZER;
-pthread_cond_t reindeer_delivery_condition = PTHREAD_COND_INITIALIZER;
-pthread_cond_t elf_solution_condition = PTHREAD_COND_INITIALIZER;
+// Mutex and condition variables
+pthread_mutex_t mutex                       = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t santa_wakeup_condition       = PTHREAD_COND_INITIALIZER;
+pthread_cond_t reindeer_delivery_condition  = PTHREAD_COND_INITIALIZER;
+pthread_cond_t elf_solution_condition       = PTHREAD_COND_INITIALIZER;
 
 ThreadArgs *set_thread_args(ThreadArgs *, const int);
 pthread_t spawn_santa(ThreadArgs *);

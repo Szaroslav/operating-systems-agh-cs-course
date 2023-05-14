@@ -7,14 +7,15 @@
 void *reindeer_routine(void *arg) {
     ThreadArgs *args = (ThreadArgs *) arg;
     char msg_buffer[BUFFER_SIZE] = "";
-    char buffer[SMALL_BUFFER_SIZE] = "";
+    char prefix[SMALL_BUFFER_SIZE] = "";
     const IntervalUSec *rhd = &REINDEER_HOLIDAYS_DURATION;
 
     pthread_mutex_lock(args->mutex);
-    snprintf(buffer, SMALL_BUFFER_SIZE, REINDEER_PREFIX " %d", args->index);
-    print_spawn(buffer);
+    snprintf(prefix, SMALL_BUFFER_SIZE, REINDEER_PREFIX " %d", args->index);
+    print_spawn(prefix);
 
     while (true) {
+        // Go on the desired holidays
         (*args->reindeers_at_north_pole)--;
         if (*args->reindeers_at_north_pole == 0) {
             snprintf(
@@ -26,10 +27,12 @@ void *reindeer_routine(void *arg) {
         }
         pthread_mutex_unlock(args->mutex);
         
+        // Rest for a some peroid of time
         const int holidays_duration = range(rhd->start, rhd->end);
         usleep(holidays_duration);
 
         pthread_mutex_lock(args->mutex);
+        // Return from the holidays
         (*args->reindeers_at_north_pole)++;
         snprintf(
             msg_buffer,
@@ -37,15 +40,17 @@ void *reindeer_routine(void *arg) {
             "Back from holidays. Currently are waiting " BOLD_STYLE "%d" RESET_STYLE " reindeers",
             *args->reindeers_at_north_pole
         );
-        print_msg(buffer, msg_buffer);
+        print_msg(prefix, msg_buffer);
 
+        // Wake Santa up, if every reindeer came back from the holidays
         if (*args->reindeers_at_north_pole == REINDEER_NUMBER) {
-            print_msg(buffer, "Waking up the Santa");
+            print_msg(prefix, "Waking up Santa");
             pthread_cond_broadcast(args->santa_wakeup_condition);
         }
         
         pthread_cond_wait(args->reindeer_delivery_condition, args->mutex);
         pthread_mutex_unlock(args->mutex);
+        // Santa delivers presents
         usleep(*args->delivery_duration);
     }
 
