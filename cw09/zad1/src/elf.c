@@ -18,6 +18,7 @@ void *elf_routine(void *arg) {
         usleep(work_duration);
 
         pthread_mutex_lock(args->mutex);
+        
         // Elf's waiting for Santa to solve the issue
         if (*args->waiting_elf_count < MAX_ISSUE_NUMBER) {
             args->waiting_elves[(*args->waiting_elf_count)++] = args->index;

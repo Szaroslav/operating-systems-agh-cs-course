@@ -11,8 +11,10 @@ void *santa_routine(void *arg) {
 
     pthread_mutex_lock(args->mutex);
     print_spawn(SANTA_PREFIX);
+    pthread_mutex_unlock(args->mutex);
 
     while (true) {
+        pthread_mutex_lock(args->mutex);
         print_msg(SANTA_PREFIX, "Going to sleep");
         pthread_cond_wait(args->santa_wakeup_condition, args->mutex);
         print_msg(SANTA_PREFIX, "Bloody hell, what's it this time?");
@@ -22,17 +24,18 @@ void *santa_routine(void *arg) {
             const int solution_duration = range(SANTA_SOLUTION_DURATION.start, SANTA_SOLUTION_DURATION.end);
             snprintf(
                 msg_buffer, BUFFER_SIZE,
-                "Solving the issues of elves " BOLD_STYLE "%d %d %d" RESET_STYLE " for %.2f",
+                "Solving the issues of elves " BOLD_STYLE "%d %d %d" RESET_STYLE " for %.2f s",
                 args->waiting_elves[0], args->waiting_elves[1], args->waiting_elves[2],
                 (double) solution_duration / SEC_TO_USEC
             );
             print_msg(SANTA_PREFIX, msg_buffer);
+            pthread_mutex_unlock(args->mutex);
             usleep(solution_duration);
 
+            pthread_mutex_lock(args->mutex);
             print_msg(SANTA_PREFIX, "The issues have been solved");
             // Inform the waiting elves, that their issues have been solved
             pthread_cond_broadcast(args->elf_solution_condition);
-            pthread_mutex_unlock(args->mutex);
         }
 
         // The presents delivery
@@ -54,6 +57,8 @@ void *santa_routine(void *arg) {
                 pthread_exit(NULL);
             }
         }
+
+        pthread_mutex_unlock(args->mutex);
     }
 
     return NULL;
