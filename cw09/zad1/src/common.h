@@ -17,7 +17,7 @@
 #define RESET_STYLE             "\033[0m"
 #define SANTA_COLOR_STYLE       "\033[48;5;196m"
 #define REINDEER_COLOR_STYLE    "\033[48;5;95m"
-#define ELF_COLOR_STYLE         "\033[48;5;47m"
+#define ELF_COLOR_STYLE         "\033[48;5;34m"
 
 typedef struct ThreadArgs {
     int index;

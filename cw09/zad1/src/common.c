@@ -16,7 +16,7 @@ int range(const int start, const int end) {
 }
 
 void print_prefix(const char *raw_prefix) {
-    // Format stdout to print the santa's prefix
+    // Format stdout to print Santa's prefix
     if (strstr(raw_prefix, SANTA_PREFIX) != NULL)
         printf(LIGHT_TEXT_COLOR SANTA_COLOR_STYLE);
     // Format stdout to print the reindeer's prefix
