@@ -10,5 +10,8 @@ santa: clean
 	mkdir $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(SOURCE_FILES) -o $(BUILD_DIR)/santa -lpthread
 
+test: santa
+	$(BUILD_DIR)/santa
+
 clean:
 	rm -rf $(BUILD_DIR)
