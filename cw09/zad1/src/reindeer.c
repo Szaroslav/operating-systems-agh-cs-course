@@ -13,10 +13,8 @@ void *reindeer_routine(void *arg) {
     pthread_mutex_lock(args->mutex);
     snprintf(buffer, SMALL_BUFFER_SIZE, REINDEER_PREFIX " %d", args->index);
     print_spawn(buffer);
-    // pthread_mutex_unlock(args->mutex);
 
     while (true) {
-        // pthread_mutex_lock(args->mutex);
         (*args->reindeers_at_north_pole)--;
         if (*args->reindeers_at_north_pole == 0) {
             snprintf(

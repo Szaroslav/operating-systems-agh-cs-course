@@ -1,5 +1,7 @@
 #include "elf.h"
 #include "common.h"
+#include <stdio.h>
+#include <unistd.h>
 
 void *elf_routine(void *arg) {
     ThreadArgs *args = (ThreadArgs *) arg;
@@ -16,32 +18,32 @@ void *elf_routine(void *arg) {
         usleep(work_duration);
 
         pthread_mutex_lock(args->mutex);
-        if (*args->elves_waiting < MAX_ISSUE_NUMBER) {
-            (*args->elves_waiting)++;
-            msg_buffer = snprintf(
+        // Elf's waiting for the Santa to solve the issue
+        if (*args->waiting_elf_count < MAX_ISSUE_NUMBER) {
+            args->waiting_elves[(*args->waiting_elf_count)++] = args->index;
+            snprintf(
                 msg_buffer, BUFFER_SIZE,
                 "Waiting for the Santa to solve an issue. Currently are " BOLD_STYLE "%d" RESET_STYLE " elves waiting",
-                *args->elves_waiting
+                *args->waiting_elf_count
             );
             print_msg(prefix, msg_buffer);
 
-            if (*args->elves_waiting == MAX_ISSUE_NUMBER) {
+            if (*args->waiting_elf_count == MAX_ISSUE_NUMBER) {
                 print_msg(prefix, "Waking up the Santa");
-                pthread_cond_broadcast(args->elf_issue_condition);
+                pthread_cond_broadcast(args->santa_wakeup_condition);
             }
 
-            pthread_cond_wait(args->elf_issue_condition, args->mutex);
-        }
-        pthread_mutex_unlock(args->mutex);
+            pthread_cond_wait(args->elf_solution_condition, args->mutex);
 
-        if (*args->reindeers_at_north_pole == REINDEER_NUMBER) {
-            print_msg(buffer, "Waking up the Santa");
-            pthread_cond_broadcast(args->santa_wakeup_condition);
+            print_msg(prefix, "My issue has been solved. Back to work");
+            (*args->waiting_elf_count)--;
         }
-        
-        pthread_cond_wait(args->reindeer_delivery_condition, args->mutex);
+        // Elf's solving the issue by theirself
+        else if (*args->waiting_elf_count >= MAX_ISSUE_NUMBER) {
+            print_msg(prefix, "There are " BOLD_STYLE "3" RESET_STYLE " elves waiting for the Santa. Solving it by myself and back to work");
+        }
+
         pthread_mutex_unlock(args->mutex);
-        usleep(*args->delivery_duration);
     }
 
     return NULL;
