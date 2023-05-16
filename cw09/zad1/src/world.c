@@ -37,6 +37,11 @@ int main()
 
     pthread_join(spawn_santa(thread_args), NULL);
 
+    // Canceling rest of the threads
+    for (int i = 0; i <  REINDEER_NUMBER + ELF_NUMBER; i++)
+        pthread_cancel(threads[i]);
+
+    // Deallocating memory
     free(threads);
     free(thread_args);
 
