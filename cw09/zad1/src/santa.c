@@ -16,9 +16,10 @@ void *santa_routine(void *arg) {
     while (true) {
         pthread_mutex_lock(args->mutex);
         print_msg(SANTA_PREFIX, "Going to sleep");
-        pthread_cond_wait(args->santa_wakeup_condition, args->mutex);
+        while (*args->waiting_elf_count < MAX_ISSUE_NUMBER && *args->reindeers_at_north_pole < REINDEER_NUMBER)
+            pthread_cond_wait(args->santa_wakeup_condition, args->mutex);
         print_msg(SANTA_PREFIX, "Bloody hell, what's it this time?");
-
+        
         // The problem solving
         if (*args->waiting_elf_count == MAX_ISSUE_NUMBER) {
             const int solution_duration = range(SANTA_SOLUTION_DURATION.start, SANTA_SOLUTION_DURATION.end);
@@ -29,13 +30,12 @@ void *santa_routine(void *arg) {
                 (double) solution_duration / SEC_TO_USEC
             );
             print_msg(SANTA_PREFIX, msg_buffer);
-            pthread_mutex_unlock(args->mutex);
             usleep(solution_duration);
 
-            pthread_mutex_lock(args->mutex);
             print_msg(SANTA_PREFIX, "The issues have been solved");
             // Inform the waiting elves, that their issues have been solved
             pthread_cond_broadcast(args->elf_solution_condition);
+            *args->waiting_elf_count = 0;
         }
 
         // The presents delivery
@@ -44,11 +44,9 @@ void *santa_routine(void *arg) {
             snprintf(msg_buffer, BUFFER_SIZE, "Delivering toys for %.2f s", (double) *args->delivery_duration / SEC_TO_USEC);
             print_msg(SANTA_PREFIX, msg_buffer);
 
-            // Harness the reindeers to deliver presents
-            pthread_cond_broadcast(args->reindeer_delivery_condition);
-            pthread_mutex_unlock(args->mutex);
-
+            // Deliver presents
             usleep(*args->delivery_duration);
+
             delivery_count++;
             print_msg(SANTA_PREFIX, "The delivery has been finished");
 
@@ -56,6 +54,8 @@ void *santa_routine(void *arg) {
             if (delivery_count >= 3) {
                 pthread_exit(NULL);
             }
+            
+            pthread_cond_broadcast(args->reindeer_delivery_condition);
         }
 
         pthread_mutex_unlock(args->mutex);
