@@ -2,15 +2,16 @@
 #define __COMMON_H__
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include <sys/types.h>
 #include <mqueue.h>
 
-#define HOME                    getenv("HOME")
-#define SERVER_NAME             "/server"
-#define MAX_CLIENTS_NUMBER      16
-#define MAX_MESSAGE_SIZE        512
-#define MAX_QUEUE_NAME_LENGTH   32
-#define DEFAULT_PRIORITY        1
+#define HOME                            getenv("HOME")
+#define LOCAL_SERVER_PATH               "/tmp/local_server"
+#define MAX_CLIENTS_NUMBER_PER_SOCKET   8
+#define MAX_MESSAGE_SIZE                512
+#define MAX_QUEUE_NAME_LENGTH           32
+#define DEFAULT_PRIORITY                1
 
 typedef enum MessageType {
     MT_INIT     = 1,

@@ -1,3 +1,0 @@
-2023-04-25 23:49:39	client id: 0	INIT
-2023-04-25 23:49:41	client id: 0	LIST
-2023-04-25 23:49:03	client id: 0	STOP

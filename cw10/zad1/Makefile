@@ -5,8 +5,8 @@ COMMON_LIB= common
 
 build: clean
 	mkdir $(BUILD_DIR)
-	$(CC) $(SRC_DIR)/server.c -o $(BUILD_DIR)/server -lrt
-	$(CC) $(SRC_DIR)/client.c -o $(BUILD_DIR)/client -lrt
+	$(CC) $(SRC_DIR)/server.c -o $(BUILD_DIR)/server -lpthread
+	$(CC) $(SRC_DIR)/client.c -o $(BUILD_DIR)/client -lpthread
 
 common:
 	$(CC) -c $(SRC_DIR)/$(SIGNALS_LIB).c -o $(BUILD_DIR)/$(SIGNALS_LIB).o
