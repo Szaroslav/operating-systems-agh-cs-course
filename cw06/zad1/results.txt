@@ -1,4 +1,9 @@
-2023-04-22 19:27:04	client id: 0	INIT
-2023-04-22 19:27:05	client id: 0	INIT
-2023-04-22 19:27:11	client id: 0	2ALL
-2023-04-22 19:27:15	client id: 1	LIST
+2023-05-17 15:09:22	client id: 0	INIT
+2023-05-17 15:09:31	client id: 0	INIT
+2023-05-17 15:09:44	client id: 0	INIT
+2023-05-17 15:09:46	client id: 2	LIST
+2023-05-17 15:10:03	client id: 2	2ALL
+2023-05-17 15:10:57	client id: 0	INIT
+2023-05-17 15:11:02	client id: 2	2ALL
+2023-05-17 15:12:06	client id: 2	2ALL
+2023-05-17 15:15:20	client id: 3	STOP
