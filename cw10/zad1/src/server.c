@@ -14,6 +14,10 @@
 // Message msg;
 // int fd;
 
+Message message;
+int client_socket_fds[MAX_CLIENTS_NUMBER];
+int client_socket_fd_size = 0;
+
 
 // int get_client_id() {
 //     if (current_queue_size >= MAX_CLIENTS_NUMBER)
@@ -65,43 +69,6 @@
 //     write(fd, buffer, l);
 // }
 
-// void on_init() {
-//     printf("\n[Server] Receive INIT message\n");
-//     printf("[Server] Client queue name: %s\n", msg.client_queue_name);
-
-//     printf("[Server] Accessing a client queue from the key... ");
-
-//     if (current_queue_size >= MAX_CLIENTS_NUMBER) {
-//         printf("Failed\n");
-//         return;
-//     }
-
-//     int cid = get_client_id();
-//     if (cid == -1) {
-//         printf("Failed\n");
-//         return;
-//     }
-
-//     client_queues[cid] = mq_open(msg.client_queue_name, O_WRONLY | O_CREAT);
-//     if (client_queues[cid] == -1) {
-//         printf("Failed\n");
-//         return;
-//     }
-//     current_queue_size++;
-
-//     printf("Succeed\n");
-
-//     printf("[Server] Client ID: %d\n", cid);
-//     printf("[Server] Client queue ID: %d\n", client_queues[cid]);
-
-//     printf("[Server] Responding to client with its ID... ");
-//     msg.message_type = MT_INIT; msg.client_id = cid;
-//     if (mq_send(client_queues[cid], (char *) &msg, MESSAGE_SIZE, DEFAULT_PRIORITY) != 0) {
-//         printf("Failed\n");
-//         return;
-//     }
-//     printf("Succeed\n");
-// }
 
 // void on_stop() {
 //     printf("\n[Server] Receive STOP message\n");
@@ -212,17 +179,19 @@
 // }
 
 void *socket_routine(void *);
+void on_init(const int);
+void on_stop();
+void on_list();
+void on_send_one();
+void on_send_all();
 
-int main(int argc, char **argv) {
-    printf("[Server] Started\n");
+int main(int argc, char **argv)
+{
+    printf("[Server] Started\n\n");
 
     pthread_t socket_thread;
     pthread_create(&socket_thread, NULL, socket_routine, NULL);
-
-    while (true) {
-        printf("Server!\n");
-        sleep(1);
-    }
+    pthread_join(socket_thread, NULL);
 
     // struct sigaction action;
     // action.sa_handler = on_sigint;
@@ -259,30 +228,15 @@ int main(int argc, char **argv) {
     //     if (mq_receive(sqd, (char *) &msg, MESSAGE_SIZE, NULL) >= 0) {
     //         save_output_to_file();
             
-    //         switch (msg.message_type) {
-    //             case MT_STOP:
-    //                 on_stop();
-    //                 break;
-    //             case MT_INIT:
-    //                 on_init();
-    //                 break;
-    //             case MT_LIST:
-    //                 on_list();
-    //                 break;
-    //             case MT_SEND_ALL:
-    //                 on_send_to_all();
-    //                 break;
-    //             case MT_SEND_ONE:
-    //                 on_send_to_one();
-    //                 break;
-    //         }
+    //         
     //     }
     // }
 
     return 0;
 }
 
-void *socket_routine(void *arg) {
+void *socket_routine(void *arg)
+{
     // Create network and local sockets
 
     // Network socket
@@ -296,26 +250,69 @@ void *socket_routine(void *arg) {
     network_server_address.sin_port = 2137;
     network_server_address.sin_addr.s_addr = INADDR_ANY;
     bind(network_socket, (struct sockaddr *) &network_server_address, sizeof(network_server_address));
-    listen(network_socket, MAX_CLIENTS_NUMBER_PER_SOCKET);
+    listen(network_socket, MAX_CLIENTS_NUMBER);
 
     // Local socket
-    int local_socket;
-    if ((local_socket = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        perror("[Error] Failed to create the local socket");
-        return NULL;
-    }
-    struct sockaddr_un local_server_address;
-    local_server_address.sun_family = AF_UNIX;
-    strcpy(local_server_address.sun_path, LOCAL_SERVER_PATH);
-    bind(local_socket, (struct sockaddr *) &local_server_address, sizeof(local_server_address));
-    listen(local_socket, MAX_CLIENTS_NUMBER_PER_SOCKET);
+    // int local_socket;
+    // if ((local_socket = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+    //     perror("[Error] Failed to create the local socket");
+    //     return NULL;
+    // }
+    // struct sockaddr_un local_server_address;
+    // local_server_address.sun_family = AF_UNIX;
+    // strcpy(local_server_address.sun_path, LOCAL_SERVER_PATH);
+    // bind(local_socket, (struct sockaddr *) &local_server_address, sizeof(local_server_address));
+    // listen(local_socket, MAX_CLIENTS_NUMBER_PER_SOCKET);
 
     // ===============================================================================
 
     while (true) {
-        int client_socket;
-        client_socket = accept(network_socket, NULL, NULL);
-        client_socket = accept(local_socket, NULL, NULL);
+        int client_socket_fd;
+        client_socket_fd = accept(network_socket, NULL, NULL);
+        // client_socket_fd = accept(local_socket, NULL, NULL);
+
+        printf("[Server] Accepted the client socket (FD %d)\n", client_socket_fd);
+        
+        printf("[Server] Receiving a message from the client... ");
+        int flags = 0;
+        int message_size = recv(client_socket_fd, &message, MESSAGE_SIZE, flags);
+        if (message_size == -1) {
+            printf("Failed\n");
+            perror("Receive error");
+        }
+        else {
+            printf("Succeeded\n");    
+        }
+
+        MessageType message_type = message.message_type;
+        int client_id;
+        if (message_type == MT_INIT) {
+            client_id = client_socket_fd_size;
+        }
+        else {
+            client_id = message.client_id;
+        }
+
+        printf("[Server] Client ID: %d\n", client_id);
+
+        switch (message_type)
+        {
+            // case MT_STOP:
+            //     on_stop();
+            //     break;
+            case MT_INIT:
+                on_init(client_socket_fd);
+                break;
+            // case MT_LIST:
+            //     on_list();
+            //     break;
+            // case MT_SEND_ALL:
+            //     on_send_all();
+            //     break;
+            // case MT_SEND_ONE:
+            //     on_send_one();
+            //     break;
+        }
 
         // printf("Socket!\n");
         // sleep(1);
@@ -323,8 +320,33 @@ void *socket_routine(void *arg) {
 
     // Close the sockets
     close(network_socket);
-    close(local_socket);
+    // close(local_socket);
     unlink(LOCAL_SERVER_PATH);
 
     return NULL;
+}
+
+void on_init(const int socket_fd) {
+    printf("\n[Server] Received INIT message\n");
+
+    if (client_socket_fd_size >= MAX_CLIENTS_NUMBER) {
+        printf("[Server] Reached maximum number of clients\n");
+        return;
+    }
+
+    int client_id = client_socket_fd_size;
+    client_socket_fds[client_socket_fd_size++] = socket_fd;
+
+    printf("[Server] Responding to client with its ID... ");
+    message.message_type = MT_INIT;
+    message.client_id = client_id;
+    int flags = 0;
+    int bytes_sent = send(socket_fd, &message, MESSAGE_SIZE, flags);
+    if (bytes_sent == -1) {
+        printf("Failed\n");
+        perror("Send error");
+    }
+    else {
+        printf("Succeed\n");
+    }
 }

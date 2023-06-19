@@ -8,6 +8,8 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
+Message message;
+int id;
 // int cid;
 // mqd_t cqd;
 // mqd_t sqd;
@@ -28,23 +30,6 @@
 
 //     printf("[Client] Wrong command (allowed: [LIST|2ALL|2ONE|STOP]). Exiting...\n");
 //     exit(-1);
-// }
-
-// void init(Message *msg, const char *name) {
-//     printf("\n[Client] Sending INIT message to the server... ");
-//     msg->message_type = MT_INIT; strcpy(msg->client_queue_name, name);
-
-//     if (mq_send(sqd, (char *) msg, MESSAGE_SIZE, DEFAULT_PRIORITY) == -1) {
-//         printf("Failed\n");
-//         return;
-//     }
-//     printf("Succeed\n");
-
-//     printf("[Client] Waiting for response from the server... ");
-//     while (mq_receive(cqd, (char *) msg, MESSAGE_SIZE, NULL) < 0);
-//     printf("Succeed\n");
-//     cid = msg->client_id;
-//     printf("[Client] Client ID: %d\n", cid);
 // }
 
 // void stop(Message *msg, bool send_msg) {
@@ -142,14 +127,19 @@
 //     printf("[Client] Stopped\n");
 // }
 
-int main(int argc, char **argv) {
-    printf("[Client] Started\n");
+
+void send_init(int);
+void receive_init(int);
+
+int main(int argc, char **argv)
+{
+    printf("[Client] Started\n\n");
 
     const char *domain = argv[2];
     int socket_fd;
 
     // Network socket
-    if (!strcmp(domain, "net")) {
+    if (/*!strcmp(domain, "net")*/ true) {
         if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
             perror("[Error] Failed to create the network socket");
             return 1;
@@ -161,23 +151,26 @@ int main(int argc, char **argv) {
         socket_address.sin_addr.s_addr = INADDR_ANY;
 
         connect(socket_fd, (struct sockaddr *) &socket_address, sizeof(socket_address));
+
+        send_init(socket_fd);
+        receive_init(socket_fd);
     }
 
     // Local socket
-    else if (!strcmp(domain, "local")) {
-        if ((socket_fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-            perror("[Error] Failed to create the local socket");
-            return 1;
-        }
+    // else if (!strcmp(domain, "local")) {
+    //     if ((socket_fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+    //         perror("[Error] Failed to create the local socket");
+    //         return 1;
+    //     }
 
-        struct sockaddr_un socket_address;
-        socket_address.sun_family = AF_UNIX;
-        strcpy(socket_address.sun_path, LOCAL_SERVER_PATH);
+    //     struct sockaddr_un socket_address;
+    //     socket_address.sun_family = AF_UNIX;
+    //     strcpy(socket_address.sun_path, LOCAL_SERVER_PATH);
 
-        connect(socket_fd, (struct sockaddr *) &socket_address, sizeof(socket_address));
-    }
+    //     connect(socket_fd, (struct sockaddr *) &socket_address, sizeof(socket_address));
+    // }
 
-    close(socket_fd);
+    // close(socket_fd);
 
     // atexit(onexit);
     // srand(time(NULL));
@@ -271,4 +264,38 @@ int main(int argc, char **argv) {
     // }
 
     return 0;
+}
+
+void send_init(int socket_fd)
+{
+    printf("[Client] Sending INIT message to the server... ");
+
+    message.message_type = MT_INIT;
+    int flags = 0;
+    int sent_bytes = send(socket_fd, &message, MESSAGE_SIZE, flags);
+    if (sent_bytes == -1) {
+        printf("Failed\n");
+        perror("Send error");
+    }
+    else {
+        printf("Succeeded\n");
+    }
+}
+
+void receive_init(int socket_fd)
+{
+    printf("[Client] Receiving INIT message from the server... ");
+
+    int flags = 0;
+    int received_bytes = recv(socket_fd, &message, MESSAGE_SIZE, flags);
+    if (received_bytes == -1) {
+        printf("Failed\n");
+        perror("Receive error");
+    }
+    else {
+        printf("Succeeded\n");
+    }
+
+    id = message.client_id;
+    printf("[Client] Client ID: %d\n", id);
 }
