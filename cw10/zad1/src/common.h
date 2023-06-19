@@ -8,7 +8,7 @@
 
 #define HOME                            getenv("HOME")
 #define LOCAL_SERVER_PATH               "/tmp/local_server"
-#define MAX_CLIENTS_NUMBER_PER_SOCKET   8
+#define MAX_CLIENTS_NUMBER              8
 #define MAX_MESSAGE_SIZE                512
 #define MAX_QUEUE_NAME_LENGTH           32
 #define DEFAULT_PRIORITY                1
@@ -18,12 +18,11 @@ typedef enum MessageType {
     MT_LIST     = 2,
     MT_SEND_ALL = 3,
     MT_SEND_ONE = 4,
-    MT_MESSAGE  = 5,
-    MT_STOP     = 6
+    MT_STOP     = 5
 } MessageType;
 
 typedef struct Message {
-    int message_type;
+    MessageType message_type;
     int client_id;
     int to_client_id;
     char client_queue_name[MAX_QUEUE_NAME_LENGTH];
