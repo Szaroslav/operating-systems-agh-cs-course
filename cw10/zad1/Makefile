@@ -8,6 +8,9 @@ build: clean
 	$(CC) $(SRC_DIR)/server.c -o $(BUILD_DIR)/server -lpthread
 	$(CC) $(SRC_DIR)/client.c -o $(BUILD_DIR)/client -lpthread
 
+test: clean build
+	clear
+
 common:
 	$(CC) -c $(SRC_DIR)/$(SIGNALS_LIB).c -o $(BUILD_DIR)/$(SIGNALS_LIB).o
 	ar rcs ./$(BUILD_DIR)/lib$(SIGNALS_LIB).a $(BUILD_DIR)/$(SIGNALS_LIB).o
