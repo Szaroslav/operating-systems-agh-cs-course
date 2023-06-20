@@ -1,15 +1,19 @@
 #include "common.h"
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/un.h>
+#include <sys/epoll.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <signal.h>
 
 Message message;
 int id;
+int socket_fd;
 // int cid;
 // mqd_t cqd;
 // mqd_t sqd;
@@ -17,66 +21,6 @@ int id;
 // char buffer[BUFSIZ];
 // pid_t receiver_pid;
 
-
-// MessageType to_message_type(const char *str) {
-//     if (strcmp(str, "LIST") == 0)
-//         return MT_LIST;
-//     if (strcmp(str, "2ALL") == 0)
-//         return MT_SEND_ALL;
-//     if (strcmp(str, "2ONE") == 0)
-//         return MT_SEND_ONE;
-//     if (strcmp(str, "STOP") == 0)
-//         return MT_STOP;
-
-//     printf("[Client] Wrong command (allowed: [LIST|2ALL|2ONE|STOP]). Exiting...\n");
-//     exit(-1);
-// }
-
-// void stop(Message *msg, bool send_msg) {
-//     bool delete = true;
-
-//     if (send_msg) {
-//         printf("\n[Client] Sending STOP message to the server... ");
-//         msg->message_type = MT_STOP; msg->client_id = cid;
-
-//         if (mq_send(sqd, (char *) msg, MESSAGE_SIZE, MT_STOP) == -1) {
-//             printf("Failed\n");
-//             delete = false;
-//         }
-//         else {
-//             printf("Succeed\n");
-//         }
-//     }
-
-//     printf("[Client] Deleting queue... ");
-//     if (delete) {
-//         if (mq_unlink(cq_name) == -1) {
-//             printf("Failed\n");
-//             return;
-//         }
-//         printf("Succeed\n");
-//     }
-//     else {
-//         if (mq_close(cqd) == -1) {
-//             printf("Failed\n");
-//             return;
-//         }
-//         printf("Succeed\n");
-//     }
-    
-//     exit(1);
-// }
-
-// void list(Message *msg) {
-//     printf("\n[Client] Sending LIST message to the server... ");
-//     msg->message_type = MT_LIST; msg->client_id = cid;
-
-//     if (mq_send(sqd, (char *) msg, MESSAGE_SIZE, DEFAULT_PRIORITY) == -1) {
-//         printf("Failed\n");
-//         return;
-//     }
-//     printf("Succeed\n");
-// }
 
 // void on_list_response(Message *msg) {
 //     printf("\n[Client] Receive response from the server\n");
@@ -113,11 +57,6 @@ int id;
 //     fflush(stdout);
 // }
 
-// void on_sigint(int signum) {
-//     Message msg;
-//     stop(&msg, true);
-// }
-
 // void onexit() {
 //     if (receiver_pid > 0)
 //         kill(receiver_pid, SIGKILL);
@@ -128,16 +67,29 @@ int id;
 // }
 
 
-void send_init(int);
-void receive_init(int);
+MessageType to_message_type(const char *);
+void *receipt_routine(void *);
+void init(const int);
+void list(const int);
+void receive_list(const char *);
+void stop(const int, const bool);
+void on_sigint(const int);
 
 int main(int argc, char **argv)
 {
     printf("[Client] Started\n\n");
 
-    const char *domain = argv[2];
-    int socket_fd;
+    // Handle SIGINT signal
+    struct sigaction action;
+    action.sa_handler = on_sigint;
+    sigaction(SIGINT, &action, NULL);
 
+    // Start thread to receiving messages from the server
+    pthread_t receipt_thread;
+    pthread_create(&receipt_thread, NULL, receipt_routine, (void *) &socket_fd);
+
+    const char *domain = argv[2];
+    
     // Network socket
     if (/*!strcmp(domain, "net")*/ true) {
         if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -152,8 +104,36 @@ int main(int argc, char **argv)
 
         connect(socket_fd, (struct sockaddr *) &socket_address, sizeof(socket_address));
 
-        send_init(socket_fd);
-        receive_init(socket_fd);
+        init(socket_fd);
+
+        char buffer[32];
+        char message[MAX_MESSAGE_SIZE] = "";
+        while (fgets(buffer, 32, stdin) != NULL) {
+            char command[32];
+            int client_id;
+            sscanf(buffer, "%s", command);
+
+            MessageType message_type = to_message_type(command);
+            switch (message_type) {
+                case MT_STOP:
+                    stop(socket_fd, true);
+                    break;
+                case MT_LIST:
+                    list(socket_fd);
+                    break;
+                // case MT_SEND_ALL:
+                //     sscanf(buffer, "%*s %[^\r\n]", message);
+                //     strcpy(msg.message, message);
+                //     send_to_all(&msg);
+                //     break;
+                // case MT_SEND_ONE:
+                //     sscanf(buffer, "%*s %d %[^\r\n]", &client_id, message);
+                //     msg.to_client_id = client_id;
+                //     strcpy(msg.message, message);
+                //     send_to_one(&msg);
+                //     break;
+            }
+        }
     }
 
     // Local socket
@@ -175,99 +155,50 @@ int main(int argc, char **argv)
     // atexit(onexit);
     // srand(time(NULL));
 
-    // printf("[Client] Creating a client queue... ");
-
-    // struct mq_attr cmq_attr = {
-    //     .mq_maxmsg = 8,
-    //     .mq_msgsize = MESSAGE_SIZE,
-    //     .mq_curmsgs = 0,
-    // };
-
-    // cq_name[0] = '\0';
-    // snprintf(cq_name, MAX_QUEUE_NAME_LENGTH, "/client%d", rand() % 254 + 2);
-    // cqd = mq_open(cq_name, O_RDWR | O_CREAT, 0664, &cmq_attr);
-    // if (cqd == -1) {
-    //     printf("Failed\n");
-    //     return -1;
-    // }
-
-    // printf("Succeed\n");
-
-    // printf("[Client] Client queue file descriptor: %d\n", cqd);
-
-    // printf("[Client] Accessing the server queue... ");
-    // sqd = mq_open(SERVER_NAME, O_WRONLY | O_CREAT);
-
-    // if (sqd == -1) {
-    //     printf("Failed\n");
-    //     perror("[Client] Server queue");
-    //     return -1;
-    // }
-    // printf("Succeed\n");
-
-    // Message msg;
-    // init(&msg, cq_name);
-
-    // receiver_pid = fork();
-    // if (receiver_pid == 0) {
-    //     Message msg;
-    //     while (true) {
-    //         if (mq_receive(cqd, (char *) &msg, MESSAGE_SIZE, NULL) >= 0) {
-    //             switch (msg.message_type) {
-    //                 case MT_STOP:
-    //                     kill(getppid(), SIGINT);
-    //                     break;
-    //                 case MT_LIST:
-    //                     on_list_response(&msg);
-    //                     break;
-    //                 case MT_MESSAGE:
-    //                     on_message(&msg);
-    //                     break;
-    //             }
-    //         }
-    //     }
-    // }
-    // else {
-    //     struct sigaction action;
-    //     action.sa_handler = on_sigint;
-    //     sigaction(SIGINT, &action, NULL);
-
-    //     while (fgets(buffer, BUFSIZ, stdin) != NULL) {
-    //         char command[BUFSIZ];
-    //         int client_id;
-    //         char message[MAX_MESSAGE_SIZE];
-    //         sscanf(buffer, "%s", command);
-
-    //         MessageType mt = to_message_type(command);
-    //         switch (mt) {
-    //             case MT_STOP:
-    //                 stop(&msg, true);
-    //                 break;
-    //             case MT_LIST:
-    //                 list(&msg);
-    //                 break;
-    //             case MT_SEND_ALL:
-    //                 sscanf(buffer, "%*s %[^\r\n]", message);
-    //                 strcpy(msg.message, message);
-    //                 send_to_all(&msg);
-    //                 break;
-    //             case MT_SEND_ONE:
-    //                 sscanf(buffer, "%*s %d %[^\r\n]", &client_id, message);
-    //                 msg.to_client_id = client_id;
-    //                 strcpy(msg.message, message);
-    //                 send_to_one(&msg);
-    //                 break;
-    //             default:
-    //                 break;
-    //         }
-    //     }
-    // }
-
     return 0;
 }
 
-void send_init(int socket_fd)
+MessageType to_message_type(const char *str)
 {
+    if (strcmp(str, "LIST") == 0)
+        return MT_LIST;
+    if (strcmp(str, "2ALL") == 0)
+        return MT_SEND_ALL;
+    if (strcmp(str, "2ONE") == 0)
+        return MT_SEND_ONE;
+    if (strcmp(str, "STOP") == 0)
+        return MT_STOP;
+
+    printf("[Client] Wrong command (allowed: [LIST|2ALL|2ONE|STOP]). Exiting...\n");
+    exit(-1);
+}
+
+void *receipt_routine(void *args)
+{
+    int socket_fd = *(int *) args;
+    while (true)
+    {
+        int flags = 0;
+        int received_bytes = recv(socket_fd, &message, MESSAGE_SIZE, flags);
+        if (received_bytes >= 0) {
+            switch (message.message_type) {
+                // case MT_STOP:
+                //     kill(getppid(), SIGINT);
+                //     break;
+                case MT_LIST:
+                    receive_list(message.message);
+                    break;
+                // case MT_MESSAGE:
+                //     on_message(&msg);
+                //     break;
+            }
+        }
+    }
+}
+
+void init(const int socket_fd)
+{
+    // Send
     printf("[Client] Sending INIT message to the server... ");
 
     message.message_type = MT_INIT;
@@ -280,13 +211,11 @@ void send_init(int socket_fd)
     else {
         printf("Succeeded\n");
     }
-}
 
-void receive_init(int socket_fd)
-{
+    // Receive
     printf("[Client] Receiving INIT message from the server... ");
 
-    int flags = 0;
+    flags = 0;
     int received_bytes = recv(socket_fd, &message, MESSAGE_SIZE, flags);
     if (received_bytes == -1) {
         printf("Failed\n");
@@ -297,5 +226,57 @@ void receive_init(int socket_fd)
     }
 
     id = message.client_id;
-    printf("[Client] Client ID: %d\n", id);
+    printf("[Client] Client ID: %d\n\n", id);
+}
+
+void list(const int socket_fd)
+{
+    // Send
+    printf("[Client] Sending LIST message to the server... ");
+    
+    message.message_type = MT_LIST;
+    message.client_id = id;
+    int flags = 0;
+    int sent_bytes = send(socket_fd, &message, MESSAGE_SIZE, flags);
+    if (sent_bytes == -1) {
+        printf("Failed\n");
+        perror("Send error");
+    }
+    else {
+        printf("Succeed\n");
+    }
+}
+
+void receive_list(const char *message)
+{
+    // Receive
+    printf("[Client] Received LIST message from the server\n");
+    printf("%s\n", message);
+}
+
+void stop(const int socket_fd, const bool send_msg)
+{
+    if (send_msg) {
+        printf("[Client] Sending STOP message to the server... ");
+        
+        message.message_type = MT_STOP;
+        message.client_id = id;
+        int flags = 0;
+        int sent_bytes = send(socket_fd, &message, MESSAGE_SIZE, flags);
+        if (sent_bytes == -1) {
+            printf("Failed\n");
+            perror("Send error");
+        }
+        else {
+            printf("Succeed\n");
+        }
+    }
+
+    exit(1);
+}
+
+void on_sigint(const int signum)
+{
+    printf("\n[Client] Received SIGINT\n");
+    stop(socket_fd, true);
 }
