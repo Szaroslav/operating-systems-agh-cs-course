@@ -5,8 +5,8 @@ COMMON_LIB= common
 
 build: clean
 	mkdir $(BUILD_DIR)
-	$(CC) $(SRC_DIR)/server.c -o $(BUILD_DIR)/server -lpthread
-	$(CC) $(SRC_DIR)/client.c -o $(BUILD_DIR)/client -lpthread
+	$(CC) $(SRC_DIR)/server.c -O3 -o $(BUILD_DIR)/server -lpthread
+	$(CC) $(SRC_DIR)/client.c -O3 -o $(BUILD_DIR)/client -lpthread
 
 test: clean build
 	clear

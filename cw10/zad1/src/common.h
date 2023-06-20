@@ -18,14 +18,14 @@ typedef enum MessageType {
     MT_LIST     = 2,
     MT_SEND_ALL = 3,
     MT_SEND_ONE = 4,
-    MT_STOP     = 5
+    MT_MESSAGE  = 5,
+    MT_STOP     = 6
 } MessageType;
 
 typedef struct Message {
     MessageType message_type;
     int client_id;
     int to_client_id;
-    char client_queue_name[MAX_QUEUE_NAME_LENGTH];
     char message[MAX_MESSAGE_SIZE];
 } Message;
 

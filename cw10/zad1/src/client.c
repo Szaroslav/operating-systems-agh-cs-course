@@ -14,66 +14,18 @@
 Message message;
 int id;
 int socket_fd;
-// int cid;
-// mqd_t cqd;
-// mqd_t sqd;
-// char cq_name[MAX_QUEUE_NAME_LENGTH];
-// char buffer[BUFSIZ];
-// pid_t receiver_pid;
-
-
-// void on_list_response(Message *msg) {
-//     printf("\n[Client] Receive response from the server\n");
-//     printf("%s", msg->message);
-//     cid = msg->client_id;
-//     printf("[Client] Client ID: %d\n", cid);
-// }
-
-// void send_to_all(Message *msg) {
-//     printf("\n[Client] Sending 2ALL message to the server... ");
-//     msg->message_type = MT_SEND_ALL; msg->client_id = cid;
-
-//     if (mq_send(sqd, (char *) msg, MESSAGE_SIZE, DEFAULT_PRIORITY) == -1) {
-//         printf("Failed\n");
-//         return;
-//     }
-//     printf("Succeed\n");
-// }
-
-// void send_to_one(Message *msg) {
-//     printf("\n[Client] Sending 2ONE message to the server... ");
-//     msg->message_type = MT_SEND_ONE; msg->client_id = cid;
-
-//     if (mq_send(sqd, (char *) msg, MESSAGE_SIZE, DEFAULT_PRIORITY) == -1) {
-//         printf("Failed\n");
-//         return;
-//     }
-//     printf("Succeed\n");
-// }
-
-// void on_message(Message *msg) {
-//     printf("\n[Client] Receive message from the server\n");
-//     printf("[Client %d] %s\n", msg->client_id, msg->message);
-//     fflush(stdout);
-// }
-
-// void onexit() {
-//     if (receiver_pid > 0)
-//         kill(receiver_pid, SIGKILL);
-//     else if (getppid() > 0)
-//         kill(getppid(), SIGINT);
-    
-//     printf("[Client] Stopped\n");
-// }
-
 
 MessageType to_message_type(const char *);
 void *receipt_routine(void *);
 void init(const int);
 void list(const int);
-void receive_list(const char *);
+void on_list(const char *);
+void send_all(const int);
+void send_one(const int);
+void on_message();
 void stop(const int, const bool);
 void on_sigint(const int);
+void _on_exit();
 
 int main(int argc, char **argv)
 {
@@ -97,9 +49,11 @@ int main(int argc, char **argv)
             return 1;
         }
 
+        const char *address = argv[1];
+        int port            = atoi(argv[2]);
         struct sockaddr_in socket_address;
         socket_address.sin_family = AF_INET;
-        socket_address.sin_port = 2137;
+        socket_address.sin_port = port;
         socket_address.sin_addr.s_addr = INADDR_ANY;
 
         connect(socket_fd, (struct sockaddr *) &socket_address, sizeof(socket_address));
@@ -107,7 +61,7 @@ int main(int argc, char **argv)
         init(socket_fd);
 
         char buffer[32];
-        char message[MAX_MESSAGE_SIZE] = "";
+        char msg[MAX_MESSAGE_SIZE] = "";
         while (fgets(buffer, 32, stdin) != NULL) {
             char command[32];
             int client_id;
@@ -121,17 +75,17 @@ int main(int argc, char **argv)
                 case MT_LIST:
                     list(socket_fd);
                     break;
-                // case MT_SEND_ALL:
-                //     sscanf(buffer, "%*s %[^\r\n]", message);
-                //     strcpy(msg.message, message);
-                //     send_to_all(&msg);
-                //     break;
-                // case MT_SEND_ONE:
-                //     sscanf(buffer, "%*s %d %[^\r\n]", &client_id, message);
-                //     msg.to_client_id = client_id;
-                //     strcpy(msg.message, message);
-                //     send_to_one(&msg);
-                //     break;
+                case MT_SEND_ALL:
+                    sscanf(buffer, "%*s %[^\r\n]", msg);
+                    strcpy(message.message, msg);
+                    send_all(socket_fd);
+                    break;
+                case MT_SEND_ONE:
+                    sscanf(buffer, "%*s %d %[^\r\n]", &client_id, msg);
+                    message.to_client_id = client_id;
+                    strcpy(message.message, msg);
+                    send_one(socket_fd);
+                    break;
             }
         }
     }
@@ -149,11 +103,6 @@ int main(int argc, char **argv)
 
     //     connect(socket_fd, (struct sockaddr *) &socket_address, sizeof(socket_address));
     // }
-
-    // close(socket_fd);
-
-    // atexit(onexit);
-    // srand(time(NULL));
 
     return 0;
 }
@@ -182,15 +131,15 @@ void *receipt_routine(void *args)
         int received_bytes = recv(socket_fd, &message, MESSAGE_SIZE, flags);
         if (received_bytes >= 0) {
             switch (message.message_type) {
-                // case MT_STOP:
-                //     kill(getppid(), SIGINT);
-                //     break;
-                case MT_LIST:
-                    receive_list(message.message);
+                case MT_STOP:
+                    pthread_exit(NULL);
                     break;
-                // case MT_MESSAGE:
-                //     on_message(&msg);
-                //     break;
+                case MT_LIST:
+                    on_list(message.message);
+                    break;
+                case MT_MESSAGE:
+                    on_message();
+                    break;
             }
         }
     }
@@ -247,11 +196,54 @@ void list(const int socket_fd)
     }
 }
 
-void receive_list(const char *message)
+void on_list(const char *message)
 {
     // Receive
     printf("[Client] Received LIST message from the server\n");
     printf("%s\n", message);
+}
+
+void send_all(const int socket_fd)
+{
+    printf("[Client] Sending 2ALL message to the server... ");
+    
+    message.message_type = MT_SEND_ALL;
+    message.client_id = id;
+    int flags = 0;
+    int sent_bytes = send(socket_fd, &message, MESSAGE_SIZE, flags);
+    if (sent_bytes == -1) {
+        printf("Failed\n");
+        perror("send error");
+        printf("\n");
+    }
+    else {
+        printf("Succeed\n\n");
+    }
+}
+
+void send_one(const int socket_id)
+{
+    printf("[Client] Sending 2ONE message to the server... ");
+
+    message.message_type = MT_SEND_ALL;
+    message.client_id = id;
+    int flags = 0;
+    int sent_bytes = send(socket_fd, &message, MESSAGE_SIZE, flags);
+    if (sent_bytes == -1) {
+        printf("Failed\n");
+        perror("send error");
+        printf("\n");
+    }
+    else {
+        printf("Succeed\n\n");
+    }
+}
+
+void on_message()
+{
+    printf("\n[Client] Receive message from the server\n");
+    printf("[Client %d] %s\n", message.client_id, message.message);
+    fflush(stdout);
 }
 
 void stop(const int socket_fd, const bool send_msg)
@@ -280,3 +272,12 @@ void on_sigint(const int signum)
     printf("\n[Client] Received SIGINT\n");
     stop(socket_fd, true);
 }
+
+// void onexit() {
+//     if (receiver_pid > 0)
+//         kill(receiver_pid, SIGKILL);
+//     else if (getppid() > 0)
+//         kill(getppid(), SIGINT);
+    
+//     printf("[Client] Stopped\n");
+// }

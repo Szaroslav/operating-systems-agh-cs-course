@@ -9,12 +9,8 @@
 #include <poll.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <signal.h>
 
-// mqd_t sqd;
-// mqd_t client_queues[MAX_CLIENTS_NUMBER] = { 0 };
-// uint current_queue_size = 0;
-// Message msg;
-// int fd;
 typedef struct sockaddr_in sockaddr_in_t;
 typedef struct pollfd pollfd_t;
 
@@ -31,35 +27,12 @@ client_t clients[MAX_CLIENTS_NUMBER];
 int clients_size = 0;
 // poll
 pollfd_t poll_fds[MAX_CLIENTS_NUMBER];
-
-// Client socket array
-// int client_socket_fds[MAX_CLIENTS_NUMBER];
-// int client_socket_fd_size = 0;
 // Message
 Message message;
+// Threads
+pthread_t socket_thread;
+pthread_t receipt_thread;
 
-
-// void mt_to_string(MessageType mt, char *buf) {
-//     switch (mt) {
-//         case MT_STOP:
-//             strcpy(buf, "STOP");
-//             break;
-//         case MT_INIT:
-//             strcpy(buf, "INIT");
-//             break;
-//         case MT_LIST:
-//             strcpy(buf, "LIST");
-//             break;
-//         case MT_SEND_ALL:
-//             strcpy(buf, "2ALL");
-//             break;
-//         case MT_SEND_ONE:
-//             strcpy(buf, "2ONE");
-//             break;
-//         default:
-//             strcpy(buf, "");
-//     }
-// }
 
 // void save_output_to_file() {
 //     char curr_time[64];
@@ -78,88 +51,33 @@ Message message;
 //     write(fd, buffer, l);
 // }
 
-// void send_to_one(const int cid, Message *msg) {
-//     if (cid < 0 || cid >= MAX_CLIENTS_NUMBER || client_queues[cid] == 0) {
-//         printf("[Server] Sending a message to %d is disallowed\n", cid);
-//         return;
-//     }
-
-//     mq_send(client_queues[cid], (char *) &msg, MESSAGE_SIZE, DEFAULT_PRIORITY);
-// }
-
-// void on_send_to_all() {
-//     printf("\n[Server] Receive 2ALL message\n");
-//     printf("[Server] Client ID: %d\n", msg.client_id);
-
-//     int cid = msg.client_id;
-//     Message new_msg = { .message_type = MT_MESSAGE, .client_id = msg.client_id };
-//     strcpy(new_msg.message, msg.message);
-
-//     for (int id = 0; id < MAX_CLIENTS_NUMBER; id++) {
-//         if (client_queues[id] == 0 || id == cid)
-//             continue;
-        
-//         send_to_one(id, &new_msg);
-//     }
-// }
-
-// void on_send_to_one() {
-//     printf("\n[Server] Receive 2ONE message\n");
-//     printf("[Server] Client ID: %d\n", msg.client_id);
-
-//     Message new_msg = { .message_type = MT_MESSAGE, .client_id = msg.client_id };
-//     strcpy(new_msg.message, msg.message);
-
-//     send_to_one(msg.to_client_id, &new_msg);
-// }
-
-// void on_sigint(int signum) {
-//     exit(1);
-// }
-
-// void onexit() {
-//     if (fd > 0)
-//         close(fd);
-
-//     msg.message_type = MT_STOP;
-//     int cid = msg.client_id;
-//     for (int id = 0; id < MAX_CLIENTS_NUMBER; id++) {
-//         if (client_queues[id] > 0) {
-//             mq_send(client_queues[cid], (char *) &msg, MESSAGE_SIZE, MT_STOP);
-//             mq_receive(sqd, (char *) &msg, MESSAGE_SIZE, NULL);
-//             on_stop();
-//         }
-//     }
-    
-//     printf("[Server] Deleting queue... ");
-//     if (mq_unlink(SERVER_NAME) == -1) {
-//         printf("Failed\n");
-//         return;
-//     }
-//     printf("Succeed\n");
-
-//     printf("\n[Server] Stopped\n");
-// }
 
 int get_client_id();
-int create_socket();
+int create_socket(int);
 void *socket_accept_routine(void *);
 void on_init(const int, const int);
 void on_stop(const int, const int);
 void on_list(const int, const int);
-void on_send_one();
-void on_send_all();
+void on_send_one(const int, const int);
+void on_send_all(const int, const int);
+void on_sigint();
+void _on_exit();
 
 int main(int argc, char **argv)
 {
     printf("[Server] Started\n\n");
 
+    atexit(_on_exit);
+    struct sigaction action;
+    action.sa_handler = on_sigint;
+    sigaction(SIGINT, &action, NULL);
+
     for (int i = 0; i < MAX_CLIENTS_NUMBER; i++) {
         clients[i].empty = true;
     }
 
-    socket_fd = create_socket();
-    pthread_t socket_thread;
+    int port = atoi(argv[1]);
+    socket_fd = create_socket(port);
     pthread_create(&socket_thread, NULL, socket_accept_routine, NULL);
 
     while (true)
@@ -199,27 +117,16 @@ int main(int argc, char **argv)
                     case MT_LIST:
                         on_list(client_socket_fd, client_id);
                         break;
-                    // case MT_SEND_ALL:
-                    //     on_send_all();
-                    //     break;
-                    // case MT_SEND_ONE:
-                    //     on_send_one();
-                    //     break;
+                    case MT_SEND_ALL:
+                        on_send_all(client_socket_fd, client_id);
+                        break;
+                    case MT_SEND_ONE:
+                        on_send_one(client_socket_fd, client_id);
+                        break;
                 }
             }
         }
     }
-
-    // Close the sockets
-    close(socket_fd);
-    // close(local_socket);
-    // unlink(LOCAL_SERVER_PATH);
-
-    // struct sigaction action;
-    // action.sa_handler = on_sigint;
-    // sigaction(SIGINT, &action, NULL);
-
-    // atexit(onexit);
 
     // printf("[Server] Opening output file... ");
     // fd = open("results.txt", O_CREAT | O_WRONLY, 0664);
@@ -228,31 +135,6 @@ int main(int argc, char **argv)
     //     return -1;
     // }
     // printf("Succeed\n");
-
-    // printf("[Server] Creating the server queue... ");
-
-    // struct mq_attr smq_attr = {
-    //     .mq_maxmsg = 8,
-    //     .mq_msgsize = MESSAGE_SIZE,
-    //     .mq_curmsgs = 0
-    // };
-
-    // sqd = mq_open(SERVER_NAME, O_RDWR | O_CREAT, 0664, &smq_attr);
-
-    // if (sqd == -1) {
-    //     printf("Failed\n");
-    //     perror("[Server] Server queue");
-    //     return -1;
-    // }
-    // printf("Succeed\n");
-
-    // while (1) {
-    //     if (mq_receive(sqd, (char *) &msg, MESSAGE_SIZE, NULL) >= 0) {
-    //         save_output_to_file();
-            
-    //         
-    //     }
-    // }
 
     return EXIT_SUCCESS;
 }
@@ -271,7 +153,7 @@ int get_client_id()
     return -1;
 }
 
-int create_socket()
+int create_socket(int port)
 {
     // Create network and local sockets
     // Network socket
@@ -282,7 +164,7 @@ int create_socket()
     }
     
     network_server_address.sin_family = AF_INET;
-    network_server_address.sin_port = 2137;
+    network_server_address.sin_port = port;
     network_server_address.sin_addr.s_addr = INADDR_ANY;
     bind(network_socket, (struct sockaddr *) &network_server_address, sizeof(network_server_address));
     listen(network_socket, MAX_CLIENTS_NUMBER);
@@ -400,7 +282,8 @@ void on_stop(const int socket_fd, const int client_id)
 }
 
 
-void on_list(const int socket_fd, const int client_id) {
+void on_list(const int socket_fd, const int client_id)
+{
     printf("[Server] Received LIST message\n");
 
     char buffer[MAX_MESSAGE_SIZE] = "";
@@ -429,4 +312,62 @@ void on_list(const int socket_fd, const int client_id) {
     else {
         printf("Succeed\n\n");
     }
+}
+
+void send_one(const int from_client_id, const int to_client_id)
+{
+    printf("[Server] Received 2ONE message\n");
+    printf("[Server] Sending message from client ID %d to client ID %d\n",
+           from_client_id,
+           to_client_id);
+    message.message_type = MT_MESSAGE;
+    int flags = 0;
+    send(clients[to_client_id].socket_fd, &message, MESSAGE_SIZE, flags);
+}
+
+void on_send_all(const int socket_fd, const int client_id) {
+    printf("[Server] Receive 2ALL message\n");
+
+    message.message_type = MT_MESSAGE;
+    message.client_id = client_id;
+    for (int i = 0; i < MAX_CLIENTS_NUMBER; i++) {
+        if (clients[i].empty || i == client_id)
+            continue;
+        
+        send_one(client_id, i);
+    }
+}
+
+void on_send_one(const int socket_fd, const int client_id) {
+    printf("[Server] Receive 2ONE message\n");
+
+    message.message_type = MT_MESSAGE;
+    message.client_id = client_id;
+    int to_client_id = message.to_client_id;
+    send_one(client_id, to_client_id);
+}
+
+void on_sigint()
+{
+    exit(EXIT_SUCCESS);
+}
+
+void _on_exit()
+{
+    message.message_type = MT_STOP;
+    for (int i = 0; i < MAX_CLIENTS_NUMBER; i++) {
+        if (!clients[i].empty) {
+            on_stop(clients[i].socket_fd, clients[i].id);
+        }
+    }
+
+    // Cancel all threads
+    pthread_cancel(socket_thread);
+    
+    // Close the sockets
+    close(socket_fd);
+    // close(local_socket);
+    // unlink(LOCAL_SERVER_PATH);
+
+    printf("\n[Server] Stopped\n");
 }
