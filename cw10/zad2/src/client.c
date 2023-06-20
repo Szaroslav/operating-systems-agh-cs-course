@@ -44,7 +44,7 @@ int main(int argc, char **argv)
     
     // Network socket
     if (/*!strcmp(domain, "net")*/ true) {
-        if ((socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        if ((socket_fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
             perror("[Error] Failed to create the network socket");
             return 1;
         }
@@ -55,7 +55,6 @@ int main(int argc, char **argv)
         socket_address.sin_family = AF_INET;
         socket_address.sin_port = port;
         socket_address.sin_addr.s_addr = INADDR_ANY;
-
         connect(socket_fd, (struct sockaddr *) &socket_address, sizeof(socket_address));
 
         init(socket_fd);
@@ -68,6 +67,7 @@ int main(int argc, char **argv)
             sscanf(buffer, "%s", command);
 
             MessageType message_type = to_message_type(command);
+            printf("%d\n", message_type);
             switch (message_type) {
                 case MT_STOP:
                     stop(socket_fd, true);
@@ -265,8 +265,8 @@ void stop(const int socket_fd, const bool send_msg)
     }
 
     close(socket_fd);
-
-    exit(1);
+    
+    exit(EXIT_SUCCESS);
 }
 
 void on_sigint(const int signum)
