@@ -1,9 +1,11 @@
 {
     "files.associations": {
+        "*.embeddedhtml": "html",
         "signal.h": "c",
         "stdio.h": "c",
         "types.h": "c",
         "stdlib.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "common.h": "c"
     }
 }
