@@ -24,7 +24,7 @@ int main()
     server_addr.sin_port        = htons(PORT);
 
     char buffer[BUFFER_SIZE] = "INIT";
-    const int bytes = sendto(
+    int bytes = sendto(
         socket_fd, buffer, sizeof(buffer), MSG_CONFIRM, (sockaddr_t *) &server_addr, sizeof(server_addr));
     if (bytes == -1) {
         perror("recvfrom() error");
@@ -32,8 +32,25 @@ int main()
     }
 
     socklen_t length = sizeof(server_addr);
-
-    // Read file
+    buffer[0] = 1;
+    while (buffer[0]) {
+        bytes = recvfrom(
+            socket_fd,
+            buffer,
+            BUFFER_SIZE,
+            MSG_WAITALL,
+            (sockaddr_t *) &server_addr,
+            &length);
+        printf("%s", buffer + 1);
+        fflush(stdout);
+        bytes = sendto(
+            socket_fd,
+            buffer,
+            sizeof(buffer),
+            MSG_CONFIRM,
+            (sockaddr_t *) &server_addr,
+            sizeof(server_addr));
+    }
 
     printf("\n[Client] Finished\n");
     return EXIT_SUCCESS;
