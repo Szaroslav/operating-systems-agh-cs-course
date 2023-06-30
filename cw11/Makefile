@@ -5,8 +5,8 @@ COMMON_LIB= common
 
 build: clean
 	mkdir $(BUILD_DIR)
-	$(CC) $(SRC_DIR)/server.c -o $(BUILD_DIR)/server
-	$(CC) $(SRC_DIR)/client.c -o $(BUILD_DIR)/client
+	$(CC) $(SRC_DIR)/server.c $(SRC_DIR)/$(COMMON_LIB).c -o $(BUILD_DIR)/server
+	$(CC) $(SRC_DIR)/client.c $(SRC_DIR)/$(COMMON_LIB).c -o $(BUILD_DIR)/client
 
 test: clean build
 	clear
