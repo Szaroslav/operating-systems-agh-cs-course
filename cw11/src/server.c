@@ -34,61 +34,62 @@ int main()
         return EXIT_FAILURE;
     }
 
-    char buffer[BUFFER_SIZE] = "";
-    socklen_t length = sizeof(client_addr);
-    int bytes = recvfrom(
-        socket_fd,
-        buffer,
-        BUFFER_SIZE,
-        MSG_WAITALL,
-        (sockaddr_t *) &client_addr,
-        &length);
-    if (bytes == -1) {
-        perror("recvfrom() error");
-        return EXIT_FAILURE;
-    }
-
-    FILE *file = fopen(FILE_TO_READ, "r");
-    if (file == NULL) {
-        perror("fopen() error");
-        return -1L;
-    }
-    
-    while (!feof(file)) {
-        size_t read_bytes = fread(buffer + 1, sizeof(char), BUFFER_SIZE - 2, file);
-        buffer[read_bytes + 1] = '\0';
-        printf("%s\n\n\n", buffer + 1);
-        buffer[0] = read_bytes == BUFFER_SIZE - 2 ? 1 : 0;
-        bytes = sendto(
-            socket_fd,
-            buffer,
-            read_bytes,
-            MSG_CONFIRM,
-            (sockaddr_t *) &client_addr,
-            length);
-        if (bytes == -1) {
-            perror("sendto() error");
-            fclose(file);
-            return EXIT_FAILURE;
-        }
-
-        bytes = recvfrom(
-            socket_fd,
-            buffer,
-            BUFFER_SIZE,
-            MSG_WAITALL,
-            (sockaddr_t *) &client_addr,
-            &length);
+    while (true) {
+        // Wait for the client's init message
+        char buffer[BUFFER_SIZE] = "";
+        socklen_t length = sizeof(client_addr);
+        socket_connection_t connection = {
+            .socket_fd   = socket_fd,
+            .buffer      = buffer,
+            .buffer_size = BUFFER_SIZE,
+            .flags       = MSG_WAITALL,
+            .addr        = (sockaddr_t *) &client_addr,
+            .addr_length = length
+        };
+        int bytes = recvfrom_wrapper(&connection);
         if (bytes == -1) {
             perror("recvfrom() error");
-            fclose(file);
             return EXIT_FAILURE;
         }
+        printf("[Server] Established connection with the client\n");
+
+        // Open the requested file
+        FILE *file = fopen(FILE_TO_READ, "r");
+        if (file == NULL) {
+            perror("fopen() error");
+            return -1L;
+        }
+        
+        // Read blocks of bytes of the file
+        while (!feof(file)) {
+            size_t read_bytes = fread(buffer + 1, sizeof(char), BUFFER_SIZE - 1, file);
+            if (read_bytes < BUFFER_SIZE - 1)
+                buffer[read_bytes + 1] = '\0';
+            buffer[0] = read_bytes == BUFFER_SIZE - 1 ? 1 : 0;
+
+            connection.buffer_size = buffer[0] ? BUFFER_SIZE : read_bytes + 2;
+            connection.flags       = MSG_CONFIRM;
+            bytes = sendto_wrapper(&connection);
+            if (bytes == -1) {
+                perror("sendto() error");
+                fclose(file);
+                return EXIT_FAILURE;
+            }
+
+            connection.buffer_size = BUFFER_SIZE;
+            connection.flags       = MSG_WAITALL;
+            bytes = recvfrom_wrapper(&connection);
+            if (bytes == -1) {
+                perror("recvfrom() error");
+                fclose(file);
+                return EXIT_FAILURE;
+            }
+        }
+
+        fclose(file);
     }
-
-    fclose(file);
+    
     printf("\n[Server] Finished\n");
-
     return EXIT_SUCCESS;
 }
 
