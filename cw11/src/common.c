@@ -1,4 +1,26 @@
 #include "common.h"
+#include <string.h>
+
+// void trim(char *string)
+// {
+//     const unsigned long n = strlen(string);
+
+//     int i = 0;
+//     while (i < n) {
+//         if (string[i] != '\n')
+//             break;
+//         i++;
+//     }
+//     string = string + i;
+
+//     i = n - 1;
+//     while (i >= 0) {
+//         if (string[i] != '\n')
+//             break;
+//         i--;
+//     }
+//     string[i] = '\0';
+// }
 
 int sendto_wrapper(socket_connection_t *sc)
 {

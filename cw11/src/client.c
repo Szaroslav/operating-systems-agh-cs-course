@@ -5,12 +5,14 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+#define OUTPUT_FILENAME "./files/output.txt"
+
 
 int main()
 {
-    printf("[Client] Started\n\n");
+    printf("[Client] Started\n");
 
-    // Create socket
+    // Create the socket
     int flags = 0;
     const int socket_fd = socket(AF_INET, SOCK_DGRAM, flags);
     if (socket_fd == -1) {
@@ -28,8 +30,8 @@ int main()
     char buffer[BUFFER_SIZE] = "";
     while (true) {
         // Get filename from stdin
-        printf("Enter a filename to read: ");
-        if (fgets(buffer, BUFFER_SIZE, stdin) == NULL)
+        printf("\nEnter a filename to read: ");
+        if (scanf("%s", buffer) == EOF)
             break;
         
         // Send init message to the server, which contains filename
@@ -49,8 +51,11 @@ int main()
         }
 
         // Receive messages, which contains the file content
+        // - print and save them
+        FILE *file = fopen(OUTPUT_FILENAME, "w");
         buffer[0] = 1;
         while (buffer[0]) {
+            // Receive
             connection.buffer_size = BUFFER_SIZE;
             connection.flags       = MSG_WAITALL;
             bytes = recvfrom_wrapper(&connection);
@@ -58,8 +63,11 @@ int main()
                 perror("recvfrom() error");
                 return EXIT_FAILURE;
             }
-            printf("%s", connection.buffer + 1);
+            printf("%s", buffer + 1);
+            // Save to the output file
+            fwrite(buffer + 1, sizeof(char), bytes - (bytes == BUFFER_SIZE ? 1 : 2), file);
 
+            // Send success response
             connection.buffer_size = 1;
             connection.flags       = MSG_CONFIRM;
             bytes = sendto_wrapper(&connection);
@@ -68,8 +76,10 @@ int main()
                 return EXIT_FAILURE;
             }
         }
+
+        fclose(file);
     }
 
-    printf("\n[Client] Finished\n");
+    printf("\n\n[Client] Finished\n");
     return EXIT_SUCCESS;
 }

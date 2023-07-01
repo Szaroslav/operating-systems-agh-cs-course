@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-
-#define FILE_TO_READ "input.txt"
 
 
 long get_file_size(FILE *);
@@ -14,6 +13,7 @@ int main()
 {
     printf("[Server] Started\n\n");
 
+    // Create the socket
     int flags = 0;
     const int socket_fd = socket(AF_INET, SOCK_DGRAM, flags);
     if (socket_fd == -1) {
@@ -21,6 +21,7 @@ int main()
         return EXIT_FAILURE;
     }
 
+    // Initialize server and client address structs
     sockaddr_in_t server_addr, client_addr;
     memset(&server_addr, 0, sizeof(server_addr));
     memset(&client_addr, 0, sizeof(client_addr));
@@ -29,6 +30,7 @@ int main()
     server_addr.sin_addr.s_addr = INADDR_ANY;
     server_addr.sin_port        = htons(PORT);
 
+    // Bind the socket to the server address
     if (bind(socket_fd, (sockaddr_t *) &server_addr, sizeof(server_addr)) == -1) {
         perror("bind() error");
         return EXIT_FAILURE;
@@ -51,10 +53,15 @@ int main()
             perror("recvfrom() error");
             return EXIT_FAILURE;
         }
+
         printf("[Server] Established connection with the client\n");
+        char filename[BUFFER_SIZE];
+        strcpy(filename, buffer);
+        printf("[Server] Requested filename: %s\n", filename);
 
         // Open the requested file
-        FILE *file = fopen(FILE_TO_READ, "r");
+        snprintf(buffer, BUFFER_SIZE, "./files/%s", filename);
+        FILE *file = fopen(buffer, "r");
         if (file == NULL) {
             perror("fopen() error");
             return -1L;
@@ -89,7 +96,9 @@ int main()
         fclose(file);
     }
     
+    close(socket_fd);
     printf("\n[Server] Finished\n");
+    
     return EXIT_SUCCESS;
 }
 
