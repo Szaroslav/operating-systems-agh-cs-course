@@ -52,6 +52,7 @@ int main()
 
         // Receive messages, which contains the file content
         // - print and save them
+        printf("=========================================================\n");
         FILE *file = fopen(OUTPUT_FILENAME, "w");
         buffer[0] = 1;
         while (buffer[0]) {
@@ -61,9 +62,10 @@ int main()
             bytes = recvfrom_wrapper(&connection);
             if (bytes == -1) {
                 perror("recvfrom() error");
+                fclose(file);
                 return EXIT_FAILURE;
             }
-            printf("%s", buffer + 1);
+            // printf("%s", buffer + 1);
             // Save to the output file
             fwrite(buffer + 1, sizeof(char), bytes - (bytes == BUFFER_SIZE ? 1 : 2), file);
 
@@ -73,9 +75,11 @@ int main()
             bytes = sendto_wrapper(&connection);
             if (bytes == -1) {
                 perror("sendto() error");
+                fclose(file);
                 return EXIT_FAILURE;
             }
         }
+        printf("=========================================================\n");
 
         fclose(file);
     }
