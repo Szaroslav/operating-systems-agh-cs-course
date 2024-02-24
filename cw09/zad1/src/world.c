@@ -31,17 +31,17 @@ int main()
     srand(time(NULL));
     pthread_t *threads = malloc((REINDEER_NUMBER + ELF_NUMBER) * sizeof(pthread_t));
     ThreadArgs *thread_args = malloc((REINDEER_NUMBER + ELF_NUMBER + 1) * sizeof(ThreadArgs));
-    
+
     spawn_reindeers(threads, thread_args);
     spawn_elves(threads, thread_args);
 
     pthread_join(spawn_santa(thread_args), NULL);
 
-    // Canceling rest of the threads
+    // Canceling rest of the threads.
     for (int i = 0; i <  REINDEER_NUMBER + ELF_NUMBER; i++)
         pthread_cancel(threads[i]);
 
-    // Deallocating memory
+    // Deallocating memory.
     free(threads);
     free(thread_args);
 

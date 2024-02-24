@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
     }
 
     struct timespec start = get_time();
-    
+
     double rec_width = atof(argv[1]);
     int n = atoi(argv[2]);
     int m = round(1 / rec_width);
@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
 
     mkfifo(PIPE_PATH, 0666);
 
-    for (int i = 0; i < n; i++) {   
+    for (int i = 0; i < n; i++) {
         if (fork() == 0) {
             snprintf(arg1, BUFFER_SIZE, "%.16lf", (double) i / n);
             snprintf(arg2, BUFFER_SIZE, "%.16lf", rec_width);
@@ -66,8 +66,6 @@ int main(int argc, char **argv) {
         }
     }
 
-    // while (wait(NULL) > 0);
-    // printf("?\n");
     int pd = open(PIPE_PATH, O_RDONLY);
 
     double field = 0.0;
@@ -78,7 +76,6 @@ int main(int argc, char **argv) {
 
         if (bytes > 0)
             i++;
-        // printf("[l] %d\n", i);
     }
 
     close(pd);

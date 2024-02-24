@@ -16,16 +16,16 @@ int range(const int start, const int end) {
 }
 
 void print_prefix(const char *raw_prefix) {
-    // Format stdout to print Santa's prefix
+    // Format stdout to print Santa's prefix.
     if (strstr(raw_prefix, SANTA_PREFIX) != NULL)
         printf(LIGHT_TEXT_COLOR SANTA_COLOR_STYLE);
-    // Format stdout to print the reindeer's prefix
+    // Format stdout to print the reindeer's prefix.
     else if (strstr(raw_prefix, REINDEER_PREFIX) != NULL)
         printf(LIGHT_TEXT_COLOR REINDEER_COLOR_STYLE);
-    // Format stdout to print the elf's prefix
+    // Format stdout to print the elf's prefix.
     else if (strstr(raw_prefix, ELF_PREFIX) != NULL)
         printf(LIGHT_TEXT_COLOR ELF_COLOR_STYLE);
-    
+
     printf(BOLD_STYLE "[%s]" RESET_STYLE " ", raw_prefix);
 }
 

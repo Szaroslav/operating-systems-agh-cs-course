@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     printf("[Hairdresser %d] Spawned\n", getpid());
 
     open_semaphores();
-    
+
     char *queue = attach_shared_mem(QUEUE_NAME, QUEUE_SIZE);
     if (queue == NULL)
         return -1;
@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
         release(sem_queue);
 
         if (queue_empty(queue)) {
-            // Wait for potential clients spawn
+            // Wait for potential clients spawn.
             sleep(1);
             if (queue_empty(queue))
                 break;

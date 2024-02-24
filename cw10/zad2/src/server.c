@@ -21,11 +21,11 @@ sockaddr_in_t network_server_address;
 typedef struct client {
     bool empty;
     int id;
-    int socket_fd;    
+    int socket_fd;
 } client_t;
 client_t clients[MAX_CLIENTS_NUMBER];
 int clients_size = 0;
-// poll
+// Poll of file descriptors
 pollfd_t poll_fds[MAX_CLIENTS_NUMBER];
 // Message
 Message message;
@@ -87,11 +87,8 @@ int main(int argc, char **argv)
             if (!clients[i].empty && is_waiting)
             {
                 const int client_socket_fd = clients[i].socket_fd,
-                          client_id        = clients[i].id; 
-                
-                // printf("[Server] Received a message from client ID %d\n", client_id);
+                          client_id        = clients[i].id;
 
-                // printf("[Server] Reading message from the client... ");
                 int flags = 0;
                 int received_bytes = recv(client_socket_fd, &message, MAX_MESSAGE_SIZE, flags);
                 // if (received_bytes == -1) {
@@ -146,7 +143,7 @@ int get_client_id()
 {
     if (clients_size >= MAX_CLIENTS_NUMBER)
         return -1;
-    
+
     for (int i = 0; i < MAX_CLIENTS_NUMBER; i++)
         if (clients[i].empty)
             return i;
@@ -156,14 +153,15 @@ int get_client_id()
 
 int create_socket(int port)
 {
-    // Create network and local sockets
+    // Create network and local sockets.
+
     // Network socket
     int network_socket;
     if ((network_socket = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
         perror("[Error] Failed to create the network socket");
         exit(EXIT_FAILURE);
     }
-    
+
     network_server_address.sin_family = AF_INET;
     network_server_address.sin_port = port;
     network_server_address.sin_addr.s_addr = INADDR_ANY;
@@ -194,10 +192,8 @@ void *socket_accept_routine(void *arg)
             perror("Accept error");
             continue;
         }
-        // client_socket_fd = accept(local_socket, NULL, NULL);
-
         printf("[Server] Accepted the client socket (FD %d)\n", client_socket_fd);
-        
+
         printf("[Server] Receiving a message from the client... ");
         int flags = 0;
         int message_size = recv(client_socket_fd, &message, MESSAGE_SIZE + 1, flags);
@@ -237,11 +233,11 @@ void on_init(const int socket_fd, const int client_id)
         return;
     }
 
-    // Add the client socket file descriptor to array
+    // Add the client socket file descriptor to array.
     clients[client_id].empty            = false;
     clients[client_id].id               = client_id;
     clients[client_id].socket_fd        = socket_fd;
-    // Initialize pollfd struct
+    // Initialize pollfd struct.
     poll_fds[client_id].fd       = socket_fd;
     poll_fds[client_id].events   = POLLIN | POLLOUT;
     //
@@ -290,7 +286,7 @@ void on_list(const int socket_fd, const int client_id)
     for (int i = 0; i < MAX_CLIENTS_NUMBER; i++) {
         if (clients[i].empty)
             continue;
-        
+
         char id_str[8];
         sprintf(id_str, "%d", i);
         strcat(buffer, id_str);
@@ -298,7 +294,7 @@ void on_list(const int socket_fd, const int client_id)
             strcat(buffer, " (you)");
         strcat(buffer, "\n");
     }
-    
+
     printf("[Server] Responding to client with list of all clients... ");
     message.message_type = MT_LIST;
     strcpy(message.message, buffer);
@@ -333,7 +329,7 @@ void on_send_all(const int socket_fd, const int client_id) {
     for (int i = 0; i < MAX_CLIENTS_NUMBER; i++) {
         if (clients[i].empty || i == client_id)
             continue;
-        
+
         send_one(client_id, i);
     }
 }
@@ -360,11 +356,9 @@ void _on_exit()
             on_stop(clients[i].socket_fd, clients[i].id);
         }
     }
-    
-    // Close the sockets
+
+    // Close the sockets.
     close(socket_fd);
-    // close(local_socket);
-    // unlink(LOCAL_SERVER_PATH);
 
     printf("\n[Server] Stopped\n");
 }

@@ -31,17 +31,17 @@ int main(int argc, char **argv)
 {
     printf("[Client] Started\n\n");
 
-    // Handle SIGINT signal
+    // Handle SIGINT signal.
     struct sigaction action;
     action.sa_handler = on_sigint;
     sigaction(SIGINT, &action, NULL);
 
-    // Start thread to receiving messages from the server
+    // Start thread to receiving messages from the server.
     pthread_t receipt_thread;
     pthread_create(&receipt_thread, NULL, receipt_routine, (void *) &socket_fd);
 
     const char *domain = argv[2];
-    
+
     // Network socket
     if (/*!strcmp(domain, "net")*/ true) {
         if ((socket_fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
@@ -147,7 +147,7 @@ void *receipt_routine(void *args)
 
 void init(const int socket_fd)
 {
-    // Send
+    // Send.
     printf("[Client] Sending INIT message to the server... ");
 
     message.message_type = MT_INIT;
@@ -160,8 +160,9 @@ void init(const int socket_fd)
     else {
         printf("Succeeded\n");
     }
+    // =========
 
-    // Receive
+    // Receive.
     printf("[Client] Receiving INIT message from the server... ");
 
     flags = 0;
@@ -173,6 +174,7 @@ void init(const int socket_fd)
     else {
         printf("Succeeded\n");
     }
+    // =========
 
     id = message.client_id;
     printf("[Client] Client ID: %d\n\n", id);
@@ -180,9 +182,8 @@ void init(const int socket_fd)
 
 void list(const int socket_fd)
 {
-    // Send
     printf("[Client] Sending LIST message to the server... ");
-    
+
     message.message_type = MT_LIST;
     message.client_id = id;
     int flags = 0;
@@ -198,7 +199,6 @@ void list(const int socket_fd)
 
 void on_list(const char *message)
 {
-    // Receive
     printf("[Client] Received LIST message from the server\n");
     printf("%s\n", message);
 }
@@ -206,7 +206,7 @@ void on_list(const char *message)
 void send_all(const int socket_fd)
 {
     printf("[Client] Sending 2ALL message to the server... ");
-    
+
     message.message_type = MT_SEND_ALL;
     message.client_id = id;
     int flags = 0;
@@ -250,7 +250,7 @@ void stop(const int socket_fd, const bool send_msg)
 {
     if (send_msg) {
         printf("[Client] Sending STOP message to the server... ");
-        
+
         message.message_type = MT_STOP;
         message.client_id = id;
         int flags = 0;
@@ -265,7 +265,7 @@ void stop(const int socket_fd, const bool send_msg)
     }
 
     close(socket_fd);
-    
+
     exit(EXIT_SUCCESS);
 }
 
@@ -274,12 +274,3 @@ void on_sigint(const int signum)
     printf("\n[Client] Received SIGINT\n");
     stop(socket_fd, true);
 }
-
-// void onexit() {
-//     if (receiver_pid > 0)
-//         kill(receiver_pid, SIGKILL);
-//     else if (getppid() > 0)
-//         kill(getppid(), SIGINT);
-    
-//     printf("[Client] Stopped\n");
-// }

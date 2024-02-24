@@ -25,7 +25,7 @@ void draw_grid(char *grid)
 {
     for (int i = 0; i < grid_height; ++i)
     {
-        // Two characters for more uniform spaces (vertical vs horizontal)
+        // Two characters for more uniform spaces (vertical vs horizontal).
         for (int j = 0; j < grid_width; ++j)
         {
             if (grid[i * grid_width + j])
@@ -144,7 +144,7 @@ void* update_cell(void *args)
 
 void update_grid_concurrent(char *src, char *dst, int threads_no)
 {
-    // Init threads
+    // Init threads.
     if (threads == NULL) {
         static struct sigaction action;
         sigemptyset(&action.sa_mask);
@@ -168,7 +168,7 @@ void update_grid_concurrent(char *src, char *dst, int threads_no)
             pthread_create(&threads[i], NULL, update_cell, (void*) &args[i]);
         }
     }
-    
+
     for (int i = 0; i < threads_no; i++)
         pthread_kill(threads[i], SIGUSR1);
 }

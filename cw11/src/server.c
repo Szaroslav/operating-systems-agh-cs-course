@@ -13,7 +13,7 @@ int main()
 {
     printf("[Server] Started\n\n");
 
-    // Create the socket
+    // Create the socket.
     int flags = 0;
     const int socket_fd = socket(AF_INET, SOCK_DGRAM, flags);
     if (socket_fd == -1) {
@@ -21,7 +21,7 @@ int main()
         return EXIT_FAILURE;
     }
 
-    // Initialize server and client address structs
+    // Initialize server and client address structs.
     sockaddr_in_t server_addr, client_addr;
     memset(&server_addr, 0, sizeof(server_addr));
     memset(&client_addr, 0, sizeof(client_addr));
@@ -30,14 +30,14 @@ int main()
     server_addr.sin_addr.s_addr = INADDR_ANY;
     server_addr.sin_port        = htons(PORT);
 
-    // Bind the socket to the server address
+    // Bind the socket to the server address.
     if (bind(socket_fd, (sockaddr_t *) &server_addr, sizeof(server_addr)) == -1) {
         perror("bind() error");
         return EXIT_FAILURE;
     }
 
     while (true) {
-        // Wait for the client's init message
+        // Wait for the client's init message.
         char buffer[BUFFER_SIZE] = "";
         socklen_t length = sizeof(client_addr);
         socket_connection_t connection = {
@@ -59,15 +59,15 @@ int main()
         strcpy(filename, buffer);
         printf("[Server] Requested filename: %s\n", filename);
 
-        // Open the requested file
+        // Open the requested file.
         snprintf(buffer, BUFFER_SIZE, "./files/%s", filename);
         FILE *file = fopen(buffer, "r");
         if (file == NULL) {
             perror("fopen() error");
             return -1L;
         }
-        
-        // Read blocks of bytes of the file
+
+        // Read blocks of bytes of the file.
         while (!feof(file)) {
             size_t read_bytes = fread(buffer + 1, sizeof(char), BUFFER_SIZE - 1, file);
             if (read_bytes < BUFFER_SIZE - 1)
@@ -95,27 +95,27 @@ int main()
 
         fclose(file);
     }
-    
+
     close(socket_fd);
     printf("\n[Server] Finished\n");
-    
+
     return EXIT_SUCCESS;
 }
 
 long get_file_size(FILE *file)
 {
-    // Set file pointer to the end
+    // Set file pointer to the end.
     if (fseek(file, 0, SEEK_END) != 0) {
         printf("fseek() error\n");
         return -1L;
     }
-    // Get file size
+    // Get file size.
     long file_size_bytes = ftell(file);
     if (file_size_bytes == -1L) {
         perror("ftell() error");
         return -1L;
     }
-    // Set file pointer back to the begining
+    // Set file pointer back to the begining.
     rewind(file);
 
     return file_size_bytes;

@@ -19,7 +19,6 @@ typedef struct socket_connection {
     socklen_t addr_length;
 } socket_connection_t;
 
-// void trim(char *);
 int sendto_wrapper(socket_connection_t *);
 int recvfrom_wrapper(socket_connection_t *);
 

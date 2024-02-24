@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 
 	srand(time(NULL));
 	setlocale(LC_CTYPE, "");
-	initscr(); // Start curses mode
+	initscr(); // Start curses mode.
 
 	char *foreground = create_grid();
 	char *background = create_grid();
@@ -31,14 +31,14 @@ int main(int argc, char **argv)
 		draw_grid(foreground);
 		usleep(500 * 1000);
 
-		// Step simulation
+		// Step of the simulation.
 		update_grid_concurrent(foreground, background, threads_no);
 		tmp = foreground;
 		foreground = background;
 		background = tmp;
 	}
 
-	endwin(); // End curses mode
+	endwin(); // End curses mode.
 	destroy_grid(foreground);
 	destroy_grid(background);
 	free_memory();
